@@ -3,8 +3,7 @@
 package lesson2.task2
 
 import lesson1.task1.sqr
-import java.lang.Math.max
-import java.lang.Math.min
+import java.lang.Math.*
 
 /**
  * Пример
@@ -20,7 +19,9 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  * Четырехзначное число назовем счастливым, если сумма первых двух ее цифр равна сумме двух последних.
  * Определить, счастливое ли заданное число, вернуть true, если это так.
  */
-fun isNumberHappy(number: Int): Boolean = number / 1000 + number / 100 % 10 == number / 10 % 10 + number % 10
+fun isNumberHappy(number: Int): Boolean = sumOf2Digits(number / 100) == sumOf2Digits(number % 100)
+
+fun sumOf2Digits(number: Int): Int = number / 10 + number % 10
 
 /**
  * Простая
@@ -29,10 +30,8 @@ fun isNumberHappy(number: Int): Boolean = number / 1000 + number / 100 % 10 == n
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
-    if ((x1 == x2) || (y1 == y2) || (Math.abs(x1 - x2) == Math.abs(y1 - y2))) return true
-    else return false
-}
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean =
+        (x1 == x2) || (y1 == y2) || (Math.abs(x1 - x2) == Math.abs(y1 - y2))
 
 /**
  * Средняя
@@ -42,13 +41,8 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
  * Вернуть true, если утверждение верно
  */
 fun circleInside(x1: Double, y1: Double, r1: Double,
-                 x2: Double, y2: Double, r2: Double): Boolean {
-    when {
-        x1 + r1 > x2 + r2 || x1 - r1 < x2 - r2 || y1 + r1 > r2 + r2 || y1 - r1 < y2 - r2 -> return false
-        (x1 != x2) && (y1 != y2) -> return false
-        else -> return true
-    }
-}
+                 x2: Double, y2: Double, r2: Double): Boolean = sqrt(sqr(x1 - x2) + sqr(y1 - y2)) + r1 <= r2
+
 
 /**
  * Средняя
@@ -60,10 +54,11 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * Вернуть true, если кирпич пройдёт
  */
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    when {
-        (min(a, b) <= min(r, s)) && (max(a, b) <= max(r, s)) -> return true
-        (min(a, c) <= min(r, s)) && (max(a, c) <= max(r, s)) -> return true
-        (min(b, c) <= min(r, s)) && (max(b, c) <= max(r, s)) -> return true
-        else -> return false
-    }
+    val minAB= min(a,b)
+    val minBC = min(b,c)
+    val minABC = min(minAB, minBC)
+    val averageABC = max(max(minAB, min(a, c)), minBC)
+    return minABC <= min(r, s) && averageABC <= max(r, s)
+
 }
+
