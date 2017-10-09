@@ -56,7 +56,7 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
     val minABC = min(min(a, b), min(b, c))
     val maxABC = max(max(a, b), max(b, c))
-    val averageABC = (maxABC + minABC) / 2
+    val averageABC = a+b+c-maxABC-minABC
     return minABC <= min(r, s) && averageABC <= max(r, s)
 }
 
