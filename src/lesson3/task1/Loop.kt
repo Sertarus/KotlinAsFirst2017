@@ -101,10 +101,13 @@ fun fib(n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    var result = min(m, n)
-    while (result % m != 0 || result % n != 0)
-        result++
-    return result
+    var firstNumber = m
+    var secondNumber = n
+    while (firstNumber != 0 && secondNumber != 0) {
+        if (firstNumber > secondNumber) firstNumber %= secondNumber
+        else secondNumber %= firstNumber
+    }
+    return m * n / (firstNumber + secondNumber)
 }
 
 /**
@@ -283,11 +286,11 @@ fun squareSequenceDigit(n: Int): Int {
 
 
 fun findSomeDigit(x1: Int, counter: Int): Int {
-    var c1 = counter
+    var c = counter
     var number = x1
-    while (c1 > 0) {
+    while (c > 0) {
         number /= 10
-        c1--
+        c--
     }
     return if (number in 0..9) number
     else number % 10
