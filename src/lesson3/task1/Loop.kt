@@ -101,8 +101,8 @@ fun fib(n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-   var result= 1
-    while (result%m!=0||result%n!=0)
+    var result = min(m, n)
+    while (result % m != 0 || result % n != 0)
         result++
     return result
 }
@@ -181,7 +181,7 @@ fun sin(x: Double, eps: Double): Double {
     while (abs(part) >= eps) {
         sinX += part
         part *= -1.0 * sqr(angle) / counter / (1.0 + counter)
-        counter+=2.0
+        counter += 2.0
     }
     return sinX
 }
@@ -215,7 +215,7 @@ fun cos(x: Double, eps: Double): Double {
     while (abs(part) >= eps) {
         cosX += part
         part *= -1.0 * sqr(angle) / counter / (1.0 + counter)
-        counter+=2.0
+        counter += 2.0
     }
     return cosX
 }
@@ -275,10 +275,10 @@ fun squareSequenceDigit(n: Int): Int {
     while (n > numberCounter) {
         squareNumber += 1
         val squareCopy = sqr(squareNumber).toInt()
-        numberCounter+= digitNumber(squareCopy)
+        numberCounter += digitNumber(squareCopy)
     }
     val square = sqr(squareNumber).toInt()
-    return findSomeDigit( square, numberCounter - n)
+    return findSomeDigit(square, numberCounter - n)
 }
 
 
@@ -307,7 +307,7 @@ fun fibSequenceDigit(n: Int): Int {
     while (n > numberCounter) {
         serialNumber += 1
         val fibNumberCopy = fib(serialNumber)
-        numberCounter+= digitNumber(fibNumberCopy)
+        numberCounter += digitNumber(fibNumberCopy)
     }
     val fibNumber = fib(serialNumber)
     return findSomeDigit(x1 = fibNumber, counter = numberCounter - n)
