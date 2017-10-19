@@ -313,5 +313,5 @@ fun fibSequenceDigit(n: Int): Int {
         numberCounter += digitNumber(fibNumberCopy)
     }
     val fibNumber = fib(serialNumber)
-    return findSomeDigit(fibNumber,numberCounter - n)
+    return findSomeDigit(fibNumber, numberCounter - n)
 }
