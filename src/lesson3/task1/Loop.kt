@@ -285,15 +285,15 @@ fun squareSequenceDigit(n: Int): Int {
 }
 
 
-fun findSomeDigit(x1: Int, counter: Int): Int {
+fun findSomeDigit(number: Int, counter: Int): Int {
     var c = counter
-    var number = x1
+    var numberCopy = number
     while (c > 0) {
-        number /= 10
+        numberCopy /= 10
         c--
     }
-    return if (number in 0..9) number
-    else number % 10
+    return if (numberCopy in 0..9) numberCopy
+    else numberCopy % 10
 }
 
 
@@ -313,5 +313,5 @@ fun fibSequenceDigit(n: Int): Int {
         numberCounter += digitNumber(fibNumberCopy)
     }
     val fibNumber = fib(serialNumber)
-    return findSomeDigit(x1 = fibNumber, counter = numberCounter - n)
+    return findSomeDigit(fibNumber,numberCounter - n)
 }
