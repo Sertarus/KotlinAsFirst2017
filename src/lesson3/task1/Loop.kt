@@ -84,12 +84,10 @@ fun fib(n: Int): Int {
     var lastNumber = 1
     var number = lastNumber
     var penultimateNumber = 1
-    var numberInSequence = 2
-    while (numberInSequence < n) {
+    for (i in 3..n) {
         lastNumber += penultimateNumber
         penultimateNumber = number
         number = lastNumber
-        numberInSequence++
     }
     return lastNumber
 }
@@ -292,8 +290,7 @@ fun findSomeDigit(number: Int, counter: Int): Int {
         numberCopy /= 10
         c--
     }
-    return if (numberCopy in 0..9) numberCopy
-    else numberCopy % 10
+    return numberCopy % 10
 }
 
 
