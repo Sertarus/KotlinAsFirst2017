@@ -75,7 +75,7 @@ fun invertPositives(list: MutableList<Int>) {
  *
  * Из имеющегося списка целых чисел, сформировать список их квадратов
  */
-fun squares(list: List<Int>) = list.map { it * it }
+fun squares(list: List<Double>) = list.map { it * it }
 
 /**
  * Пример
@@ -110,7 +110,7 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * Модуль пустого вектора считать равным 0.0.
  */
 fun abs(v: List<Double>): Double {
-    val sqrList = v.map { it * it }
+    val sqrList = squares(v)
     return sqrt(sqrList.sum())
 }
 
@@ -245,6 +245,7 @@ fun convert(n: Int, base: Int): List<Int> {
     val result = mutableListOf<Int>()
     if (list.isEmpty())
         result.add(n)
+
     for (i in list.size - 1 downTo 0)
         result.add(list[i])
     return result
@@ -394,6 +395,7 @@ fun russian(n: Int): String {
     var result = ""
     var numberHundreds = n % 1000
     var numberThousands = n / 1000
+
     result += hundreds[numberThousands / 100]
     numberThousands %= 100
     if (numberThousands in 10..19)
