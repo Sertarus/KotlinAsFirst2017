@@ -245,7 +245,6 @@ fun convert(n: Int, base: Int): List<Int> {
     val result = mutableListOf<Int>()
     if (list.isEmpty())
         result.add(n)
-
     for (i in list.size - 1 downTo 0)
         result.add(list[i])
     return result
@@ -395,7 +394,6 @@ fun russian(n: Int): String {
     var result = ""
     var numberHundreds = n % 1000
     var numberThousands = n / 1000
-
     result += hundreds[numberThousands / 100]
     numberThousands %= 100
     if (numberThousands in 10..19)
