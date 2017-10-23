@@ -405,7 +405,7 @@ fun russian(n: Int): String {
     if (n / 1000 != 0) {
         result += when {
             numberThousands % 10 == 1 -> "тысяча "
-            (numberThousands % 10 in 2..4) -> "тысячи "
+            (numberThousands % 10 in 2..4 && numberThousands % 100 !in 12..14) -> "тысячи "
             else -> "тысяч "
         }
     }
