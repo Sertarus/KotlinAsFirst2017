@@ -141,13 +141,13 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    var result = ""
-    if (phone.first() == '+' || phone.first().toInt() in 48..57) result += phone.first()
+    var phoneNumber = ""
+    if (phone.first() == '+' || phone.first().toInt() in 48..57) phoneNumber += phone.first()
     for (char in phone.substring(1, phone.length)) {
-        if (char.toInt() in 48..57) result += char
+        if (char.toInt() in 48..57) phoneNumber += char
         else if (char != '-' && char != ' ' && char != '(' && char != ')') return ""
     }
-    return result
+    return phoneNumber
 }
 
 /**
