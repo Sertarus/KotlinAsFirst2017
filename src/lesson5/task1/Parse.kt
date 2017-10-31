@@ -67,28 +67,26 @@ fun main(args: Array<String>) {
  */
 fun dateStrToDigit(str: String): String {
     val parts = str.split(" ")
-    var result = ""
     if (parts.size != 3) return ""
     if (parts[0].toInt() !in 1..31) return ""
-    result += if (parts[0].toInt() in 1..9) "0" + parts[0]
-    else parts[0]
-    result += when {
-        parts[1] == "января" -> ".01."
-        parts[1] == "февраля" -> ".02."
-        parts[1] == "марта" -> ".03."
-        parts[1] == "апреля" -> ".04."
-        parts[1] == "мая" -> ".05."
-        parts[1] == "июня" -> ".06."
-        parts[1] == "июля" -> ".07."
-        parts[1] == "августа" -> ".08."
-        parts[1] == "сентября" -> ".09."
-        parts[1] == "октября" -> ".10."
-        parts[1] == "ноября" -> ".11."
-        parts[1] == "декабря" -> ".12."
+    val month: Int
+    month = when {
+        parts[1] == "января" -> 1
+        parts[1] == "февраля" -> 2
+        parts[1] == "марта" -> 3
+        parts[1] == "апреля" -> 4
+        parts[1] == "мая" -> 5
+        parts[1] == "июня" -> 6
+        parts[1] == "июля" -> 7
+        parts[1] == "августа" -> 8
+        parts[1] == "сентября" -> 9
+        parts[1] == "октября" -> 10
+        parts[1] == "ноября" -> 11
+        parts[1] == "декабря" -> 12
         else -> return ""
     }
-    if (parts[2].toInt() >= 1) result += parts[2] else return ""
-    return result
+    if (parts[2].toInt() < 0) return ""
+    return String.format("%02d.%02d.%d", parts[0].toInt(), month, parts[2].toInt())
 }
 
 /**
@@ -121,7 +119,7 @@ fun dateDigitToStr(digital: String): String {
             parts[1] == "12" -> " декабря "
             else -> return ""
         }
-        if (parts[2].toInt() >= 1) result += parts[2] else return ""
+        if (parts[2].toInt() >= 0) result += parts[2] else return ""
         return result
     } catch (e: NumberFormatException) {
         return ""
@@ -141,6 +139,7 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
+    if (phone == "") return ""
     var phoneNumber = ""
     if (phone.first() == '+' || phone.first().toInt() in 48..57) phoneNumber += phone.first()
     for (char in phone.substring(1, phone.length)) {
@@ -161,16 +160,21 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    val jump = jumps.split(" ")
-    var result = -1
     return try {
+        var newJumps = ""
+        for (i in 0 until jumps.length - 1)
+            if (jumps[i] != jumps[i + 1])
+                newJumps += jumps[i]
+        newJumps += jumps.last()
+        val jump = newJumps.split(" ")
+        var result = -1
         for (element in jump) {
             if (element == "%" || element == "-")
             else if (element.toInt() > result) result = element.toInt()
         }
         result
     } catch (e: NumberFormatException) {
-        -1
+        return -1
     }
 }
 
@@ -196,6 +200,8 @@ fun bestHighJump(jumps: String): Int {
             if (char == '+') plusNumber += 1
             if (char == '-') minusNumber += 1
             if (minusNumber > 1 || plusNumber > 1) return -1
+            plusNumber = 0
+            minusNumber = 0
         }
     var result = -1
     for (i in 1 until jump.size) {
@@ -299,6 +305,7 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
+    if (roman == "") return -1
     var result = 0
     var counter = 0
     while (counter != roman.length - 1) {
@@ -392,6 +399,7 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    if ('[' in commands && ']' !in commands) throw IllegalArgumentException()
     for (char in commands)
         if (char != '>' && char != '<' && char != '+' && char != '-' && char != '[' && char != ']' && char != ' ') throw IllegalArgumentException()
     val regularBracketList = mutableListOf<Int>()
