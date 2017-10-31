@@ -164,6 +164,7 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
+    if (jumps == "") return -1
     return try {
         var newJumps = ""
         for (i in 0 until jumps.length - 1)
