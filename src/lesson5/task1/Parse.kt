@@ -66,27 +66,31 @@ fun main(args: Array<String>) {
  * При неверном формате входной строки вернуть пустую строку
  */
 fun dateStrToDigit(str: String): String {
-    val parts = str.split(" ")
-    if (parts.size != 3) return ""
-    if (parts[0].toInt() !in 1..31) return ""
-    val month: Int
-    month = when {
-        parts[1] == "января" -> 1
-        parts[1] == "февраля" -> 2
-        parts[1] == "марта" -> 3
-        parts[1] == "апреля" -> 4
-        parts[1] == "мая" -> 5
-        parts[1] == "июня" -> 6
-        parts[1] == "июля" -> 7
-        parts[1] == "августа" -> 8
-        parts[1] == "сентября" -> 9
-        parts[1] == "октября" -> 10
-        parts[1] == "ноября" -> 11
-        parts[1] == "декабря" -> 12
-        else -> return ""
+    try {
+        val parts = str.split(" ")
+        if (parts.size != 3) return ""
+        if (parts[0].toInt() !in 1..31) return ""
+        val month: Int
+        month = when {
+            parts[1] == "января" -> 1
+            parts[1] == "февраля" -> 2
+            parts[1] == "марта" -> 3
+            parts[1] == "апреля" -> 4
+            parts[1] == "мая" -> 5
+            parts[1] == "июня" -> 6
+            parts[1] == "июля" -> 7
+            parts[1] == "августа" -> 8
+            parts[1] == "сентября" -> 9
+            parts[1] == "октября" -> 10
+            parts[1] == "ноября" -> 11
+            parts[1] == "декабря" -> 12
+            else -> return ""
+        }
+        if (parts[2].toInt() < 0) return ""
+        return String.format("%02d.%02d.%d", parts[0].toInt(), month, parts[2].toInt())
+    } catch (e: NumberFormatException) {
+        return ""
     }
-    if (parts[2].toInt() < 0) return ""
-    return String.format("%02d.%02d.%d", parts[0].toInt(), month, parts[2].toInt())
 }
 
 /**
@@ -163,7 +167,7 @@ fun bestLongJump(jumps: String): Int {
     return try {
         var newJumps = ""
         for (i in 0 until jumps.length - 1)
-            if (jumps[i] != jumps[i + 1])
+            if (jumps[i] != jumps[i + 1] || jumps[i].toInt() in 48..57)
                 newJumps += jumps[i]
         newJumps += jumps.last()
         val jump = newJumps.split(" ")
