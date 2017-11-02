@@ -70,20 +70,19 @@ fun dateStrToDigit(str: String): String {
         val parts = str.split(" ")
         if (parts.size != 3) return ""
         if (parts[0].toInt() !in 1..31) return ""
-        val month: Int
-        month = when {
-            parts[1] == "января" -> 1
-            parts[1] == "февраля" -> 2
-            parts[1] == "марта" -> 3
-            parts[1] == "апреля" -> 4
-            parts[1] == "мая" -> 5
-            parts[1] == "июня" -> 6
-            parts[1] == "июля" -> 7
-            parts[1] == "августа" -> 8
-            parts[1] == "сентября" -> 9
-            parts[1] == "октября" -> 10
-            parts[1] == "ноября" -> 11
-            parts[1] == "декабря" -> 12
+        val month = when (parts[1]) {
+            "января" -> 1
+            "февраля" -> 2
+            "марта" -> 3
+            "апреля" -> 4
+            "мая" -> 5
+            "июня" -> 6
+            "июля" -> 7
+            "августа" -> 8
+            "сентября" -> 9
+            "октября" -> 10
+            "ноября" -> 11
+            "декабря" -> 12
             else -> return ""
         }
         if (parts[2].toInt() < 0) return ""
@@ -102,29 +101,30 @@ fun dateStrToDigit(str: String): String {
  */
 fun dateDigitToStr(digital: String): String {
     val parts = digital.split(".")
-    var result = ""
+    val result = StringBuilder()
+    if (parts.size != 3) return ""
     try {
-        if (parts.size != 3) return ""
         if (parts[0].toInt() !in 1..31) return ""
-        result += if (parts[0].first() == '0') parts[0].toInt()
-        else parts[0]
-        result += when {
-            parts[1] == "01" -> " января "
-            parts[1] == "02" -> " февраля "
-            parts[1] == "03" -> " марта "
-            parts[1] == "04" -> " апреля "
-            parts[1] == "05" -> " мая "
-            parts[1] == "06" -> " июня "
-            parts[1] == "07" -> " июля "
-            parts[1] == "08" -> " августа "
-            parts[1] == "09" -> " сентября "
-            parts[1] == "10" -> " октября "
-            parts[1] == "11" -> " ноября "
-            parts[1] == "12" -> " декабря "
+        if (parts[0].first() == '0') result.append(parts[0].toInt())
+        else result.append(parts[0])
+        val month = when (parts[1]) {
+            "01" -> " января "
+            "02" -> " февраля "
+            "03" -> " марта "
+            "04" -> " апреля "
+            "05" -> " мая "
+            "06" -> " июня "
+            "07" -> " июля "
+            "08" -> " августа "
+            "09" -> " сентября "
+            "10" -> " октября "
+            "11" -> " ноября "
+            "12" -> " декабря "
             else -> return ""
         }
-        if (parts[2].toInt() >= 0) result += parts[2] else return ""
-        return result
+        result.append(month)
+        if (parts[2].toInt() >= 0) result.append(parts[2]) else return ""
+        return result.toString()
     } catch (e: NumberFormatException) {
         return ""
     }
@@ -144,13 +144,13 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String {
     if (phone == "") return ""
-    var phoneNumber = ""
-    if (phone.first() == '+' || phone.first().toInt() in 48..57) phoneNumber += phone.first()
+    val phoneNumber = StringBuilder()
+    if (phone.first() == '+' || phone.first() in '0'..'9') phoneNumber.append(phone.first())
     for (char in phone.substring(1, phone.length)) {
-        if (char.toInt() in 48..57) phoneNumber += char
-        else if (char != '-' && char != ' ' && char != '(' && char != ')') return ""
+        if (char in '0'..'9') phoneNumber.append(char)
+        else if (char !in "-() ") return ""
     }
-    return phoneNumber
+    return phoneNumber.toString()
 }
 
 /**
@@ -166,13 +166,8 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     if (jumps == "") return -1
     return try {
-        var newJumps = ""
-        for (i in 0 until jumps.length - 1)
-            if (jumps[i] != jumps[i + 1] || jumps[i].toInt() in 48..57)
-                newJumps += jumps[i]
-        newJumps += jumps.last()
-        val jump = newJumps.split(" ")
         var result = -1
+        val jump = jumps.split(Regex(" +"))
         for (element in jump) {
             if (element == "%" || element == "-")
             else if (element.toInt() > result) result = element.toInt()
@@ -197,7 +192,7 @@ fun bestHighJump(jumps: String): Int {
     var plusNumber = 0
     var minusNumber = 0
     for (char in jumps)
-        if (char.toInt() !in 48..57 && char != '+' && char != '-' && char != '%' && char != ' ')
+        if (char !in "0123456789+-% ")
             return -1
     val jump = jumps.split(" ")
     for (element in jump)
@@ -282,14 +277,17 @@ fun firstDuplicateIndex(str: String): Int {
 fun mostExpensive(description: String): String {
     if (description == "") return ""
     val descriptionList = description.split("; ")
-    var mostExpensiveIndex = 0
+    var mostExpensiveProduct = descriptionList[0].split(" ")[0]
+    var theHighestPrice = descriptionList[0].split(" ")[1].toDouble()
     try {
         return try {
             for (i in 0 until descriptionList.size) {
-                if (descriptionList[mostExpensiveIndex].split(" ")[1].toDouble() < descriptionList[i].split(" ")[1].toDouble())
-                    mostExpensiveIndex = i
+                if (theHighestPrice < descriptionList[i].split(" ")[1].toDouble()) {
+                    theHighestPrice = descriptionList[i].split(" ")[1].toDouble()
+                    mostExpensiveProduct = descriptionList[i].split(" ")[0]
+                }
             }
-            descriptionList[mostExpensiveIndex].split(" ")[0]
+            mostExpensiveProduct
         } catch (e: NumberFormatException) {
             return ""
         }
@@ -316,39 +314,49 @@ fun fromRoman(roman: String): Int {
     while (counter != roman.length - 1) {
         when {
             roman[counter] == 'M' -> {
-                result += 1000; counter++
+                result += 1000
+                counter++
             }
             roman[counter] == 'D' && roman[counter + 1] == 'M' -> return -1
             roman[counter] == 'D' -> {
-                result += 500; counter++
+                result += 500
+                counter++
             }
             roman[counter] == 'C' && (roman[counter + 1] == 'M' || roman[counter + 1] == 'D') -> {
-                result += -100; counter++
+                result += -100
+                counter++
             }
             roman[counter] == 'C' -> {
-                result += 100; counter++
+                result += 100
+                counter++
             }
             roman[counter] == 'L' && (roman[counter + 1] == 'M' || roman[counter + 1] == 'D' || roman[counter + 1] == 'C') -> return -1
             roman[counter] == 'L' -> {
-                result += 50; counter++
+                result += 50
+                counter++
             }
             roman[counter] == 'X' && (roman[counter + 1] == 'M' || roman[counter + 1] == 'D') -> return -1
             roman[counter] == 'X' && (roman[counter + 1] == 'C' || roman[counter + 1] == 'L') -> {
-                result += -10; counter++
+                result += -10
+                counter++
             }
             roman[counter] == 'X' -> {
-                result += 10; counter++
+                result += 10
+                counter++
             }
             roman[counter] == 'V' && (roman[counter + 1] != 'I' && roman[counter + 1] != 'V') -> return -1
             roman[counter] == 'V' -> {
-                result += 5; counter++
+                result += 5
+                counter++
             }
             roman[counter] == 'I' && (roman[counter + 1] != 'I' && roman[counter + 1] != 'V') && roman[counter + 1] != 'X' -> return -1
             roman[counter] == 'I' && (roman[counter + 1] == 'V' || roman[counter + 1] == 'X') -> {
-                result += -1; counter++
+                result += -1
+                counter++
             }
             roman[counter] == 'I' -> {
-                result += 1; counter++
+                result += 1
+                counter++
             }
             else -> return -1
         }
@@ -406,7 +414,7 @@ fun fromRoman(roman: String): Int {
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     if ('[' in commands && ']' !in commands) throw IllegalArgumentException()
     for (char in commands)
-        if (char != '>' && char != '<' && char != '+' && char != '-' && char != '[' && char != ']' && char != ' ') throw IllegalArgumentException()
+        if (char !in "><+-[] ") throw IllegalArgumentException()
     val regularBracketList = mutableListOf<Int>()
     val backwardBracketList = mutableListOf<Int>()
     var pairsOfBracketsNumber = 0

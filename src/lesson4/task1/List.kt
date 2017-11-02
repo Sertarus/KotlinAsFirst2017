@@ -131,10 +131,10 @@ fun mean(list: List<Double>): Double = if (list.isNotEmpty()) list.sum() / list.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     if (list.isEmpty()) return list
-        val average = mean(list)
-        for (i in 0 until list.size) {
-            list[i] -= average
-        }
+    val average = mean(list)
+    for (i in 0 until list.size) {
+        list[i] -= average
+    }
     return list
 }
 
@@ -255,7 +255,7 @@ fun convertToString(n: Int, base: Int): String {
     val result = StringBuilder()
     for (i in 0 until list.size) {
         if (list[i] in 10..35)
-            result.append('a' + list[i] - 10).toString()
+            result.append('a' + list[i] - 10)
         else result.append(list[i])
     }
     return result.toString()
@@ -289,8 +289,8 @@ fun decimalFromString(str: String, base: Int): Int {
     var number = 0
     var counter = str.length - 1
     for (char in str) {
-        val digit = if (char.toInt() <= 57) char.toInt() - 48
-        else char.toInt() - 87
+        val digit = if (char.toInt() <= '9'.toInt()) char.toInt() - '0'.toInt()
+        else char.toInt() - 'a'.toInt() + 10
         number += digit * pow(base.toDouble(), (counter.toDouble())).toInt()
         counter--
     }
@@ -307,64 +307,62 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 fun roman(n: Int): String {
     var number = n
-    var result = ""
+    val result = StringBuilder()
     while (number != 0) {
-        when {
-            number >= 1000 -> {
-                result += "M"
-                number -= 1000
-            }
-            number >= 900 -> {
-                result += "CM"
-                number -= 900
-            }
-            number >= 500 -> {
-                result += "D"
-                number -= 500
-            }
-            number >= 400 -> {
-                result += "CD"
-                number -= 400
-            }
-            number >= 100 -> {
-                result += "C"
-                number -= 100
-            }
-            number >= 90 -> {
-                result += "XC"
-                number -= 90
-            }
-            number >= 50 -> {
-                result += "L"
-                number -= 50
-            }
-            number >= 40 -> {
-                result += "XL"
-                number -= 40
-            }
-            number >= 10 -> {
-                result += "X"
-                number -= 10
-            }
-            number >= 9 -> {
-                result += "IX"
-                number -= 9
-            }
-            number >= 5 -> {
-                result += "V"
-                number -= 5
-            }
-            number >= 4 -> {
-                result += "IV"
-                number -= 4
-            }
-            number >= 1 -> {
-                result += "I"
-                number -= 1
-            }
+        while (number >= 1000) {
+            result.append("M")
+            number -= 1000
+        }
+        while (number >= 900) {
+            result.append("CM")
+            number -= 900
+        }
+        while (number >= 500) {
+            result.append("D")
+            number -= 500
+        }
+        while (number >= 400) {
+            result.append("CD")
+            number -= 400
+        }
+        while (number >= 100) {
+            result.append("C")
+            number -= 100
+        }
+        while (number >= 90) {
+            result.append("XC")
+            number -= 90
+        }
+        while (number >= 50) {
+            result.append("L")
+            number -= 50
+        }
+        while (number >= 40) {
+            result.append("XL")
+            number -= 40
+        }
+        while (number >= 10) {
+            result.append("X")
+            number -= 10
+        }
+        while (number >= 9) {
+            result.append("IX")
+            number -= 9
+        }
+        while (number >= 5) {
+            result.append("V")
+            number -= 5
+        }
+        while (number >= 4) {
+            result.append("IV")
+            number -= 4
+        }
+        while (number >= 1) {
+            result.append("I")
+            number -= 1
         }
     }
-    return result
+    return result.toString()
 }
 
 
@@ -383,33 +381,33 @@ fun russian(n: Int): String {
             "восемьдесят ", "девяносто ")
     val hundreds = listOf("", "сто ", "двести ", "триста ", "четыреста ", "пятьсот ", "шестьсот ", "семьсот ",
             "восемьсот ", "девятьсот ")
-    var result = ""
+    val result = StringBuilder()
     var numberHundreds = n % 1000
     var numberThousands = n / 1000
-    result += hundreds[numberThousands / 100]
+    result.append(hundreds[numberThousands / 100])
     numberThousands %= 100
     if (numberThousands in 10..19)
-        result += dozensAndUnits[numberThousands - 10]
+        result.append(dozensAndUnits[numberThousands - 10])
     else {
-        result += dozens[numberThousands / 10]
-        result += units[numberThousands % 10]
+        result.append(dozens[numberThousands / 10])
+        result.append(units[numberThousands % 10])
     }
     if (n / 1000 != 0) {
-        result += when {
-            numberThousands % 10 == 1 && numberThousands % 100 !=11 -> "тысяча "
-            (numberThousands % 10 in 2..4 && numberThousands % 100 !in 12..14) -> "тысячи "
-            else -> "тысяч "
+        when {
+            numberThousands % 10 == 1 && numberThousands % 100 != 11 -> result.append("тысяча ")
+            numberThousands % 10 in 2..4 && numberThousands % 100 !in 12..14 -> result.append("тысячи ")
+            else -> result.append("тысяч ")
         }
     }
     units[1] = "один "
     units[2] = "два "
-    result += hundreds[numberHundreds / 100]
+    result.append(hundreds[numberHundreds / 100])
     numberHundreds %= 100
     if (numberHundreds in 10..19)
-        result += dozensAndUnits[numberHundreds - 10]
+        result.append(dozensAndUnits[numberHundreds - 10])
     else {
-        result += dozens[numberHundreds / 10]
-        result += units[numberHundreds % 10]
+        result.append(dozens[numberHundreds / 10])
+        result.append(units[numberHundreds % 10])
     }
-    return result.trim()
+    return result.toString().trim()
 }

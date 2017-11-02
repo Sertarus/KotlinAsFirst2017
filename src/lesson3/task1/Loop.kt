@@ -69,7 +69,7 @@ fun digitNumber(n: Int): Int {
     var number = n
     do {
         number /= 10
-        digitN ++
+        digitN++
     } while (number != 0)
     return digitN
 }
@@ -274,7 +274,7 @@ fun squareSequenceDigit(n: Int): Int {
     var numberCounter = 0
     var squareNumber = 0.0
     while (n > numberCounter) {
-        squareNumber ++
+        squareNumber++
         val squareCopy = sqr(squareNumber).toInt()
         numberCounter += digitNumber(squareCopy)
     }
@@ -305,7 +305,7 @@ fun fibSequenceDigit(n: Int): Int {
     var numberCounter = 0
     var serialNumber = 0
     while (n > numberCounter) {
-        serialNumber ++
+        serialNumber++
         val fibNumberCopy = fib(serialNumber)
         numberCounter += digitNumber(fibNumberCopy)
     }
