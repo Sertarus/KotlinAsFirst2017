@@ -131,12 +131,10 @@ fun mean(list: List<Double>): Double = if (list.isNotEmpty()) list.sum() / list.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
     if (list.isEmpty()) return list
-    else {
         val average = mean(list)
         for (i in 0 until list.size) {
             list[i] -= average
         }
-    }
     return list
 }
 
@@ -205,11 +203,7 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
 fun factorize(n: Int): List<Int> {
     val result = mutableListOf<Int>()
     var number = n
-    while (number % 2 == 0) {
-        result.add(2)
-        number /= 2
-    }
-    for (i in 3..n step 2) {
+    for (i in 2..n) {
         while (number % i == 0) {
             result.add(i)
             number /= i
@@ -243,8 +237,6 @@ fun convert(n: Int, base: Int): List<Int> {
     }
     list.add(number)
     val result = mutableListOf<Int>()
-    if (list.isEmpty())
-        result.add(n)
     for (i in list.size - 1 downTo 0)
         result.add(list[i])
     return result
@@ -260,13 +252,13 @@ fun convert(n: Int, base: Int): List<Int> {
  */
 fun convertToString(n: Int, base: Int): String {
     val list = convert(n, base)
-    var result = ""
+    val result = StringBuilder()
     for (i in 0 until list.size) {
-        result += if (list[i] in 10..35)
-            'a' + list[i] - 10
-        else list[i].toString()
+        if (list[i] in 10..35)
+            result.append('a' + list[i] - 10).toString()
+        else result.append(list[i])
     }
-    return result
+    return result.toString()
 }
 
 /**
