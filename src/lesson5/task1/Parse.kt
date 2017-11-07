@@ -189,7 +189,7 @@ fun bestLongJump(jumps: String): Int {
  */
 fun bestHighJump(jumps: String): Int {
     for (char in jumps)
-        if (char !in "0..9+-% ")
+        if (char !in '0'..'9' && char !in "%+- ")
             return -1
     val jump = jumps.split(" ")
     var plusNumber = 0
