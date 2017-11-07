@@ -184,11 +184,9 @@ fun polynom(p: List<Double>, x: Double): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double> {
-    for (i in list.size - 1 downTo 1) {
-        for (k in 1..i) {
-            list[i] += list[i - k]
-        }
-    }
+    val listCopy = list.toList()
+    for (i in 1 until list.size)
+        list[i] = listCopy.subList(0, i + 1).sum()
     return list
 }
 
@@ -289,8 +287,8 @@ fun decimalFromString(str: String, base: Int): Int {
     var number = 0
     var counter = str.length - 1
     for (char in str) {
-        val digit = if (char.toInt() <= '9'.toInt()) char.toInt() - '0'.toInt()
-        else char.toInt() - 'a'.toInt() + 10
+        val digit = if (char <= '9') char - '0'
+        else char - 'a' + 10
         number += digit * pow(base.toDouble(), (counter.toDouble())).toInt()
         counter--
     }
@@ -308,60 +306,44 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     var number = n
     val result = StringBuilder()
-    while (number != 0) {
-        while (number >= 1000) {
-            result.append("M")
-            number -= 1000
-        }
-        while (number >= 900) {
-            result.append("CM")
-            number -= 900
-        }
-        while (number >= 500) {
-            result.append("D")
-            number -= 500
-        }
-        while (number >= 400) {
-            result.append("CD")
-            number -= 400
-        }
-        while (number >= 100) {
-            result.append("C")
-            number -= 100
-        }
-        while (number >= 90) {
-            result.append("XC")
-            number -= 90
-        }
-        while (number >= 50) {
-            result.append("L")
-            number -= 50
-        }
-        while (number >= 40) {
-            result.append("XL")
-            number -= 40
-        }
-        while (number >= 10) {
-            result.append("X")
-            number -= 10
-        }
-        while (number >= 9) {
-            result.append("IX")
-            number -= 9
-        }
-        while (number >= 5) {
-            result.append("V")
-            number -= 5
-        }
-        while (number >= 4) {
-            result.append("IV")
-            number -= 4
-        }
-        while (number >= 1) {
-            result.append("I")
-            number -= 1
-        }
-    }
+    for (i in 0 until number / 1000)
+        result.append("M")
+    number %= 1000
+    for (i in 0 until number / 900)
+        result.append("CM")
+    number %= 900
+    for (i in 0 until number / 500)
+        result.append("D")
+    number %= 500
+    for (i in 0 until number / 400)
+        result.append("CD")
+    number %= 400
+    for (i in 0 until number / 100)
+        result.append("C")
+    number %= 100
+    for (i in 0 until number / 90)
+        result.append("XC")
+    number %= 90
+    for (i in 0 until number / 50)
+        result.append("L")
+    number %= 50
+    for (i in 0 until number / 40)
+        result.append("XL")
+    number %= 40
+    for (i in 0 until number / 10)
+        result.append("X")
+    number %= 10
+    for (i in 0 until number / 9)
+        result.append("IX")
+    number %= 9
+    for (i in 0 until number / 5)
+        result.append("V")
+    number %= 5
+    for (i in 0 until number / 4)
+        result.append("IV")
+    number %= 4
+    for (i in 0 until number / 1)
+        result.append("I")
     return result.toString()
 }
 

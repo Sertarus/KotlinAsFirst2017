@@ -169,8 +169,7 @@ fun bestLongJump(jumps: String): Int {
         var result = -1
         val jump = jumps.split(Regex(" +"))
         for (element in jump) {
-            if (element == "%" || element == "-")
-            else if (element.toInt() > result) result = element.toInt()
+            if (element !in "%-" && element.toInt() > result) result = element.toInt()
         }
         result
     } catch (e: NumberFormatException) {
@@ -189,12 +188,12 @@ fun bestLongJump(jumps: String): Int {
  * При нарушении формата входной строки вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    var plusNumber = 0
-    var minusNumber = 0
     for (char in jumps)
-        if (char !in "0123456789+-% ")
+        if (char !in "0..9+-% ")
             return -1
     val jump = jumps.split(" ")
+    var plusNumber = 0
+    var minusNumber = 0
     for (element in jump)
         for (char in element) {
             if (char == '+') plusNumber += 1
@@ -277,17 +276,12 @@ fun firstDuplicateIndex(str: String): Int {
 fun mostExpensive(description: String): String {
     if (description == "") return ""
     val descriptionList = description.split("; ")
-    var mostExpensiveProduct = descriptionList[0].split(" ")[0]
-    var theHighestPrice = descriptionList[0].split(" ")[1].toDouble()
+    val priceList = mutableListOf<Double>()
     try {
         return try {
-            for (i in 0 until descriptionList.size) {
-                if (theHighestPrice < descriptionList[i].split(" ")[1].toDouble()) {
-                    theHighestPrice = descriptionList[i].split(" ")[1].toDouble()
-                    mostExpensiveProduct = descriptionList[i].split(" ")[0]
-                }
-            }
-            mostExpensiveProduct
+            for (i in 0 until descriptionList.size)
+                priceList.add(descriptionList[i].split(" ")[1].toDouble())
+            descriptionList[priceList.indexOf(priceList.max())].split(" ")[0]
         } catch (e: NumberFormatException) {
             return ""
         }
@@ -295,6 +289,7 @@ fun mostExpensive(description: String): String {
         return ""
     }
 }
+
 
 /**
  * Сложная
@@ -311,18 +306,19 @@ fun fromRoman(roman: String): Int {
     if (roman == "") return -1
     var result = 0
     var counter = 0
-    while (counter != roman.length - 1) {
+    for (i in 0 until roman.length - 1) {
         when {
             roman[counter] == 'M' -> {
                 result += 1000
                 counter++
             }
-            roman[counter] == 'D' && roman[counter + 1] == 'M' -> return -1
+            roman[counter] == 'D' && roman[counter + 1] in "M" -> return -1
+
             roman[counter] == 'D' -> {
                 result += 500
                 counter++
             }
-            roman[counter] == 'C' && (roman[counter + 1] == 'M' || roman[counter + 1] == 'D') -> {
+            roman[counter] == 'C' && (roman[counter + 1] in "MD") -> {
                 result += -100
                 counter++
             }
@@ -330,13 +326,13 @@ fun fromRoman(roman: String): Int {
                 result += 100
                 counter++
             }
-            roman[counter] == 'L' && (roman[counter + 1] == 'M' || roman[counter + 1] == 'D' || roman[counter + 1] == 'C') -> return -1
+            roman[counter] == 'L' && (roman[counter + 1] in "MDC") -> return -1
             roman[counter] == 'L' -> {
                 result += 50
                 counter++
             }
-            roman[counter] == 'X' && (roman[counter + 1] == 'M' || roman[counter + 1] == 'D') -> return -1
-            roman[counter] == 'X' && (roman[counter + 1] == 'C' || roman[counter + 1] == 'L') -> {
+            roman[counter] == 'X' && (roman[counter + 1] in "MD") -> return -1
+            roman[counter] == 'X' && (roman[counter + 1] in "CL") -> {
                 result += -10
                 counter++
             }
@@ -344,13 +340,13 @@ fun fromRoman(roman: String): Int {
                 result += 10
                 counter++
             }
-            roman[counter] == 'V' && (roman[counter + 1] != 'I' && roman[counter + 1] != 'V') -> return -1
+            roman[counter] == 'V' && (roman[counter + 1] !in "IV") -> return -1
             roman[counter] == 'V' -> {
                 result += 5
                 counter++
             }
-            roman[counter] == 'I' && (roman[counter + 1] != 'I' && roman[counter + 1] != 'V') && roman[counter + 1] != 'X' -> return -1
-            roman[counter] == 'I' && (roman[counter + 1] == 'V' || roman[counter + 1] == 'X') -> {
+            roman[counter] == 'I' && (roman[counter + 1] !in "IVX") -> return -1
+            roman[counter] == 'I' && (roman[counter + 1] in "VX") -> {
                 result += -1
                 counter++
             }
