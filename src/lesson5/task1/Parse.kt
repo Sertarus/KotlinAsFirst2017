@@ -305,55 +305,23 @@ fun mostExpensive(description: String): String {
 fun fromRoman(roman: String): Int {
     if (roman == "") return -1
     var result = 0
-    var counter = 0
     for (i in 0 until roman.length - 1) {
         when {
-            roman[counter] == 'M' -> {
-                result += 1000
-                counter++
-            }
-            roman[counter] == 'D' && roman[counter + 1] in "M" -> return -1
-
-            roman[counter] == 'D' -> {
-                result += 500
-                counter++
-            }
-            roman[counter] == 'C' && (roman[counter + 1] in "MD") -> {
-                result += -100
-                counter++
-            }
-            roman[counter] == 'C' -> {
-                result += 100
-                counter++
-            }
-            roman[counter] == 'L' && (roman[counter + 1] in "MDC") -> return -1
-            roman[counter] == 'L' -> {
-                result += 50
-                counter++
-            }
-            roman[counter] == 'X' && (roman[counter + 1] in "MD") -> return -1
-            roman[counter] == 'X' && (roman[counter + 1] in "CL") -> {
-                result += -10
-                counter++
-            }
-            roman[counter] == 'X' -> {
-                result += 10
-                counter++
-            }
-            roman[counter] == 'V' && (roman[counter + 1] !in "IV") -> return -1
-            roman[counter] == 'V' -> {
-                result += 5
-                counter++
-            }
-            roman[counter] == 'I' && (roman[counter + 1] !in "IVX") -> return -1
-            roman[counter] == 'I' && (roman[counter + 1] in "VX") -> {
-                result += -1
-                counter++
-            }
-            roman[counter] == 'I' -> {
-                result += 1
-                counter++
-            }
+            roman[i] == 'M' -> result += 1000
+            roman[i] == 'D' && roman[i + 1] in "M" -> return -1
+            roman[i] == 'D' -> result += 500
+            roman[i] == 'C' && (roman[i + 1] in "MD") -> result -= 100
+            roman[i] == 'C' -> result += 100
+            roman[i] == 'L' && (roman[i + 1] in "MDC") -> return -1
+            roman[i] == 'L' -> result += 50
+            roman[i] == 'X' && (roman[i + 1] in "MD") -> return -1
+            roman[i] == 'X' && (roman[i + 1] in "CL") -> result -= 10
+            roman[i] == 'X' -> result += 10
+            roman[i] == 'V' && (roman[i + 1] !in "IV") -> return -1
+            roman[i] == 'V' -> result += 5
+            roman[i] == 'I' && (roman[i + 1] !in "IVX") -> return -1
+            roman[i] == 'I' && (roman[i + 1] in "VX") -> result -= 1
+            roman[i] == 'I' -> result += 1
             else -> return -1
         }
     }

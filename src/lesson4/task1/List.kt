@@ -306,44 +306,13 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     var number = n
     val result = StringBuilder()
-    for (i in 0 until number / 1000)
-        result.append("M")
-    number %= 1000
-    for (i in 0 until number / 900)
-        result.append("CM")
-    number %= 900
-    for (i in 0 until number / 500)
-        result.append("D")
-    number %= 500
-    for (i in 0 until number / 400)
-        result.append("CD")
-    number %= 400
-    for (i in 0 until number / 100)
-        result.append("C")
-    number %= 100
-    for (i in 0 until number / 90)
-        result.append("XC")
-    number %= 90
-    for (i in 0 until number / 50)
-        result.append("L")
-    number %= 50
-    for (i in 0 until number / 40)
-        result.append("XL")
-    number %= 40
-    for (i in 0 until number / 10)
-        result.append("X")
-    number %= 10
-    for (i in 0 until number / 9)
-        result.append("IX")
-    number %= 9
-    for (i in 0 until number / 5)
-        result.append("V")
-    number %= 5
-    for (i in 0 until number / 4)
-        result.append("IV")
-    number %= 4
-    for (i in 0 until number / 1)
-        result.append("I")
+    val numbersList = listOf<Int>(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+    val symbolsList = listOf<String>("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
+    for (i in 0 until numbersList.size) {
+        for (k in 0 until number / numbersList[i])
+            result.append(symbolsList[i])
+        number %= numbersList[i]
+    }
     return result.toString()
 }
 
