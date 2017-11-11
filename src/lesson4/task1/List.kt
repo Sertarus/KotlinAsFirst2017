@@ -184,9 +184,8 @@ fun polynom(p: List<Double>, x: Double): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double> {
-    val listCopy = list.toList()
     for (i in 1 until list.size)
-        list[i] = listCopy.subList(0, i + 1).sum()
+        list[i] += list[i - 1]
     return list
 }
 
@@ -306,8 +305,8 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     var number = n
     val result = StringBuilder()
-    val numbersList = listOf<Int>(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
-    val symbolsList = listOf<String>("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
+    val numbersList = listOf(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
+    val symbolsList = listOf("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
     for (i in 0 until numbersList.size) {
         for (k in 0 until number / numbersList[i])
             result.append(symbolsList[i])

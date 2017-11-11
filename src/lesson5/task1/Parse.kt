@@ -308,20 +308,15 @@ fun fromRoman(roman: String): Int {
     for (i in 0 until roman.length - 1) {
         when {
             roman[i] == 'M' -> result += 1000
-            roman[i] == 'D' && roman[i + 1] in "M" -> return -1
-            roman[i] == 'D' -> result += 500
-            roman[i] == 'C' && (roman[i + 1] in "MD") -> result -= 100
+            roman[i] == 'D' && roman[i + 1] !in "M" -> result += 500
+            roman[i] == 'C' && roman[i + 1] in "MD" -> result -= 100
             roman[i] == 'C' -> result += 100
-            roman[i] == 'L' && (roman[i + 1] in "MDC") -> return -1
-            roman[i] == 'L' -> result += 50
-            roman[i] == 'X' && (roman[i + 1] in "MD") -> return -1
-            roman[i] == 'X' && (roman[i + 1] in "CL") -> result -= 10
+            roman[i] == 'L' && roman[i + 1] !in "MDC" -> result += 50
+            roman[i] == 'X' && roman[i + 1] !in "MD" && roman[i + 1] in "CL" -> result -= 10
             roman[i] == 'X' -> result += 10
-            roman[i] == 'V' && (roman[i + 1] !in "IV") -> return -1
-            roman[i] == 'V' -> result += 5
-            roman[i] == 'I' && (roman[i + 1] !in "IVX") -> return -1
-            roman[i] == 'I' && (roman[i + 1] in "VX") -> result -= 1
-            roman[i] == 'I' -> result += 1
+            roman[i] == 'V' && roman[i + 1] in "IV" -> result += 5
+            roman[i] == 'I' && roman[i + 1] in "VX" -> result -= 1
+            roman[i] == 'I' && roman[i + 1] in "I" -> result += 1
             else -> return -1
         }
     }
