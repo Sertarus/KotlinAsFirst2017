@@ -313,7 +313,7 @@ fun fromRoman(roman: String): Int {
             roman[i] == 'C' -> result += 100
             roman[i] == 'L' && roman[i + 1] !in "MDC" -> result += 50
             roman[i] == 'X' && roman[i + 1] !in "MD" && roman[i + 1] in "CL" -> result -= 10
-            roman[i] == 'X' -> result += 10
+            roman[i] == 'X' && roman[i + 1] !in "MD" -> result += 10
             roman[i] == 'V' && roman[i + 1] in "IV" -> result += 5
             roman[i] == 'I' && roman[i + 1] in "VX" -> result -= 1
             roman[i] == 'I' && roman[i + 1] in "I" -> result += 1
