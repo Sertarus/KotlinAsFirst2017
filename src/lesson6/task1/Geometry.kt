@@ -150,8 +150,10 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
     fun crossPoint(other: Line): Point {
-        val x = (Math.cos(angle) * other.b - b * Math.cos(other.angle)) / (Math.sin(angle) * Math.cos(other.angle) - Math.sin(other.angle) * Math.cos(angle))
-        val y = (x * Math.sin(other.angle) + other.b) / Math.cos(other.angle)
+        val x = (Math.cos(angle) * other.b - b * Math.cos(other.angle)) /
+                (Math.sin(angle) * Math.cos(other.angle) - Math.sin(other.angle) * Math.cos(angle))
+        val y = (other.b * Math.sin(angle) - b * Math.sin(other.angle)) /
+                (Math.cos(other.angle) * Math.sin(angle) - Math.cos(angle) * Math.sin(other.angle))
         return Point(x, y)
     }
 
@@ -218,7 +220,8 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
     try {
         for (i in 0 until circles.size)
             for (k in 0 until circles.size) {
-                if (circles[firstCircleIndex].distance(circles[secondCircleIndex]) > circles[i].distance(circles[k]) && i != k) {
+                if (circles[firstCircleIndex].distance(circles[secondCircleIndex]) >
+                        circles[i].distance(circles[k]) && i != k) {
                     firstCircleIndex = i
                     secondCircleIndex = k
                 }
@@ -240,8 +243,11 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  */
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     var center = bisectorByPoints(a, b).crossPoint(bisectorByPoints(b, c))
-    if (center.x == Double.NaN || center.y == Double.NaN) center = bisectorByPoints(a, b).crossPoint(bisectorByPoints(a, c))
-    if (center.x == Double.NaN || center.y == Double.NaN) center = bisectorByPoints(a, c).crossPoint(bisectorByPoints(b, c))
+    if (center.x == Double.NaN || center.y == Double.NaN) center =
+            bisectorByPoints(a, b).crossPoint(bisectorByPoints(a, c))
+    if (center.x == Double.NaN || center.y == Double.NaN) center =
+            bisectorByPoints(a, c).crossPoint(bisectorByPoints(b, c))
+    println(center)
     return Circle(center, center.distance(a))
 }
 
@@ -266,7 +272,8 @@ fun minContainingCircle(vararg points: Point): Circle {
                 mostRemotePoints[0] = points[i]
                 mostRemotePoints[1] = points[k]
             }
-    var circle = Circle(Point(mostRemotePoints[0].x / 2 + mostRemotePoints[1].x / 2, mostRemotePoints[0].y / 2 + mostRemotePoints[1].y / 2), mostRemotePoints[0].distance(mostRemotePoints[1]) / 2)
+    var circle = Circle(Point(mostRemotePoints[0].x / 2 + mostRemotePoints[1].x / 2, mostRemotePoints[0].y / 2 +
+            mostRemotePoints[1].y / 2), mostRemotePoints[0].distance(mostRemotePoints[1]) / 2)
     var contain = true
     for (i in points)
         if (!circle.contains(i)) contain = false
