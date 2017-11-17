@@ -247,7 +247,6 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
             bisectorByPoints(a, b).crossPoint(bisectorByPoints(a, c))
     if (center.x == Double.NaN || center.y == Double.NaN) center =
             bisectorByPoints(a, c).crossPoint(bisectorByPoints(b, c))
-    println(center)
     return Circle(center, center.distance(a))
 }
 
@@ -273,9 +272,7 @@ fun minContainingCircle(vararg points: Point): Circle {
                 mostRemotePoints[1] = points[k]
             }
     var circle = Circle(Point((mostRemotePoints[0].x + mostRemotePoints[1].x) / 2, (mostRemotePoints[0].y +
-            mostRemotePoints[1].y) / 2), mostRemotePoints[0].distance(Point((mostRemotePoints[0].x +
-            mostRemotePoints[1].x) / 2, (mostRemotePoints[0].y + mostRemotePoints[1].y) / 2)))
-    println(circle.radius)
+            mostRemotePoints[1].y) / 2), mostRemotePoints[0].distance(mostRemotePoints[1])/2)
     var contain = true
     for (i in points)
         if (!circle.contains(i)) contain = false
