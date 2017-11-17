@@ -271,8 +271,8 @@ fun minContainingCircle(vararg points: Point): Circle {
                 mostRemotePoints[0] = points[i]
                 mostRemotePoints[1] = points[k]
             }
-    var circle = Circle(Point((mostRemotePoints[0].x + mostRemotePoints[1].x) / 2, (mostRemotePoints[0].y +
-            mostRemotePoints[1].y) / 2), mostRemotePoints[0].distance(mostRemotePoints[1])/2)
+    var circle = Circle(Point((mostRemotePoints[0].x + mostRemotePoints[1].x) / 2.0, (mostRemotePoints[0].y +
+            mostRemotePoints[1].y) / 2.0), mostRemotePoints[0].distance(mostRemotePoints[1])/2.0)
     var contain = true
     for (i in points)
         if (!circle.contains(i)) contain = false
