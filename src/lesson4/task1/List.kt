@@ -145,13 +145,8 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
-fun times(a: List<Double>, b: List<Double>): Double {
-    val result = mutableListOf<Double>()
-    for (i in 0 until a.size) {
-        val part = a[i] * b[i]
-        result.add(part)
-    }
-    return result.sum()
+fun times(a: List<Double>, b: List<Double>): Double = a.zip(b).map { it.first * it.second }.fold(0.0) { previousResult, element ->
+    previousResult + element
 }
 
 /**
@@ -163,14 +158,11 @@ fun times(a: List<Double>, b: List<Double>): Double {
  * Значение пустого многочлена равно 0.0 при любом x.
  */
 fun polynom(p: List<Double>, x: Double): Double {
-    var counter = 0.0
-    val result = mutableListOf<Double>()
-    for (i in 0 until p.size) {
-        val part = p[i] * pow(x, counter)
-        result.add(part)
-        counter++
+    var result = 0.0
+    for ((index, value) in p.withIndex()) {
+        result += value * pow(x, index.toDouble())
     }
-    return result.sum()
+    return result
 }
 
 /**
@@ -227,16 +219,13 @@ fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*
  */
 fun convert(n: Int, base: Int): List<Int> {
     var number = n
-    val list = mutableListOf<Int>()
+    val result = mutableListOf<Int>()
     while (number >= base) {
-        list.add(number % base)
+        result.add(number % base)
         number /= base
     }
-    list.add(number)
-    val result = mutableListOf<Int>()
-    for (i in list.size - 1 downTo 0)
-        result.add(list[i])
-    return result
+    result.add(number)
+    return result.asReversed()
 }
 
 /**
@@ -250,10 +239,11 @@ fun convert(n: Int, base: Int): List<Int> {
 fun convertToString(n: Int, base: Int): String {
     val list = convert(n, base)
     val result = StringBuilder()
-    for (i in 0 until list.size) {
-        if (list[i] in 10..35)
-            result.append('a' + list[i] - 10)
-        else result.append(list[i])
+    for (element in list) {
+        if (list[element] in 10..35)
+            result.append('a' + list[element] - 10)
+        else
+            result.append(list[element])
     }
     return result.toString()
 }
@@ -267,9 +257,8 @@ fun convertToString(n: Int, base: Int): String {
  */
 fun decimal(digits: List<Int>, base: Int): Int {
     var number = 0
-    for (i in 0 until digits.size) {
+    for (i in 0 until digits.size)
         number += (digits[i] * pow(base.toDouble(), (digits.size - 1 - i.toDouble()))).toInt()
-    }
     return number
 }
 
@@ -284,12 +273,11 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     var number = 0
-    var counter = str.length - 1
+    var baseInDegree = pow(base.toDouble(), str.length - 1.toDouble()).toInt()
     for (char in str) {
-        val digit = if (char <= '9') char - '0'
-        else char - 'a' + 10
-        number += digit * pow(base.toDouble(), (counter.toDouble())).toInt()
-        counter--
+        val digit = if (char <= '9') char - '0' else char - 'a' + 10
+        number += digit * baseInDegree
+        baseInDegree /= base
     }
     return number
 }
@@ -305,16 +293,14 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     var number = n
     val result = StringBuilder()
-    val numbersList = listOf(1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1)
-    val symbolsList = listOf("M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I")
-    for (i in 0 until numbersList.size) {
-        for (k in 0 until number / numbersList[i])
-            result.append(symbolsList[i])
-        number %= numbersList[i]
+    val pairsList = listOf(Pair(1000, "M"), Pair(900, "CM"), Pair(500, "D"), Pair(400, "CD"), Pair(100, "C"), Pair(90, "XC"),
+            Pair(50, "L"), Pair(40, "XL"), Pair(10, "X"), Pair(9, "IX"), Pair(5, "V"), Pair(4, "IV"), Pair(1, "I"))
+    for ((first, second) in pairsList) {
+        result.append(second.repeat(number / first))
+        number %= first
     }
     return result.toString()
 }
-
 
 /**
  * Очень сложная
@@ -332,16 +318,9 @@ fun russian(n: Int): String {
     val hundreds = listOf("", "сто ", "двести ", "триста ", "четыреста ", "пятьсот ", "шестьсот ", "семьсот ",
             "восемьсот ", "девятьсот ")
     val result = StringBuilder()
-    var numberHundreds = n % 1000
-    var numberThousands = n / 1000
-    result.append(hundreds[numberThousands / 100])
-    numberThousands %= 100
-    if (numberThousands in 10..19)
-        result.append(dozensAndUnits[numberThousands - 10])
-    else {
-        result.append(dozens[numberThousands / 10])
-        result.append(units[numberThousands % 10])
-    }
+    val numberHundreds = n % 1000
+    val numberThousands = n / 1000
+    result.append(writeDownANumberInWords(numberThousands, units, dozensAndUnits, dozens, hundreds))
     if (n / 1000 != 0) {
         when {
             numberThousands % 10 == 1 && numberThousands % 100 != 11 -> result.append("тысяча ")
@@ -351,13 +330,21 @@ fun russian(n: Int): String {
     }
     units[1] = "один "
     units[2] = "два "
-    result.append(hundreds[numberHundreds / 100])
-    numberHundreds %= 100
-    if (numberHundreds in 10..19)
-        result.append(dozensAndUnits[numberHundreds - 10])
-    else {
-        result.append(dozens[numberHundreds / 10])
-        result.append(units[numberHundreds % 10])
-    }
+    result.append(writeDownANumberInWords(numberHundreds, units, dozensAndUnits, dozens, hundreds))
     return result.toString().trim()
+}
+
+fun writeDownANumberInWords(n: Int, units: List<String>, dozensAndUnits: List<String>, dozens: List<String>,
+                            hundreds: List<String>): StringBuilder {
+    val result = StringBuilder()
+    var number = n
+    result.append(hundreds[number / 100])
+    number %= 100
+    if (number in 10..19)
+        result.append(dozensAndUnits[number - 10])
+    else {
+        result.append(dozens[number / 10])
+        result.append(units[number % 10])
+    }
+    return result
 }
