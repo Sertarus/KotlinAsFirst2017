@@ -145,6 +145,7 @@ fun flattenPhoneNumber(phone: String): String {
     if (phone == "" || phone == "+") return ""
     val phoneNumber = StringBuilder()
     if (phone.first() == '+' || phone.first() in '0'..'9') phoneNumber.append(phone.first())
+    else return ""
     for (char in phone.substring(1, phone.length)) {
         if (char in '0'..'9') phoneNumber.append(char)
         else if (char !in "-() ") return ""
@@ -192,7 +193,7 @@ fun bestHighJump(jumps: String): Int {
         if (jump[i].matches(Regex("""(\D*)""")))
             return -1
     for (i in 1 until jump.size step 2)
-        if (jump[i].matches(Regex("""^(?!%*\+).+$""")) && jump[i].matches(Regex("""^(?!%*-).+$""")))
+        if (jump[i].matches(Regex("""^(?!%*).+$""")))
             return -1
     var result = -1
     for (i in 1 until jump.size) {
@@ -253,6 +254,7 @@ fun firstDuplicateIndex(str: String): Int {
         }
     }
     return if (duplicateWordNumber == -1) -1
+    else if (duplicateWordNumber == 0) 1
     else strList.subList(0, duplicateWordNumber).joinToString(separator = " ").length + 1
 }
 
@@ -271,7 +273,7 @@ fun mostExpensive(description: String): String {
     if (description == "") return ""
     val descriptionList = description.split("; ")
     for (element in descriptionList)
-        if (element.matches(Regex("""^(?![а-яА-Я]+ (\d)+\.(\d)+).+$""")))
+        if (element.matches(Regex("""^(?!.+ (\d)+\.(\d)+).+$""")))
             return ""
     val priceList = mutableListOf<Double>()
     return try {

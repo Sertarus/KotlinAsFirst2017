@@ -238,10 +238,10 @@ fun convertToString(n: Int, base: Int): String {
     val list = convert(n, base)
     val result = StringBuilder()
     for (element in list) {
-        if (list[element] in 10..35)
-            result.append('a' + list[element] - 10)
+        if (element in 10..35)
+            result.append('a' + element - 10)
         else
-            result.append(list[element])
+            result.append(element)
     }
     return result.toString()
 }
