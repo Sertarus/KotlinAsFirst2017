@@ -66,30 +66,29 @@ fun main(args: Array<String>) {
  * При неверном формате входной строки вернуть пустую строку
  */
 fun dateStrToDigit(str: String): String {
+    val parts = str.split(" ")
+    if (parts.size != 3) return ""
     try {
-        val parts = str.split(" ")
-        if (parts.size != 3) return ""
-        if (parts[0].toInt() !in 1..31) return ""
-        val month = when (parts[1]) {
-            "января" -> 1
-            "февраля" -> 2
-            "марта" -> 3
-            "апреля" -> 4
-            "мая" -> 5
-            "июня" -> 6
-            "июля" -> 7
-            "августа" -> 8
-            "сентября" -> 9
-            "октября" -> 10
-            "ноября" -> 11
-            "декабря" -> 12
-            else -> return ""
-        }
-        if (parts[2].toInt() < 0) return ""
-        return String.format("%02d.%02d.%d", parts[0].toInt(), month, parts[2].toInt())
+        if (parts[0].toInt() !in 1..31 || parts[2].toInt() < 0) return ""
     } catch (e: NumberFormatException) {
         return ""
     }
+    val month = when (parts[1]) {
+        "января" -> 1
+        "февраля" -> 2
+        "марта" -> 3
+        "апреля" -> 4
+        "мая" -> 5
+        "июня" -> 6
+        "июля" -> 7
+        "августа" -> 8
+        "сентября" -> 9
+        "октября" -> 10
+        "ноября" -> 11
+        "декабря" -> 12
+        else -> return ""
+    }
+    return String.format("%02d.%02d.%d", parts[0].toInt(), month, parts[2].toInt())
 }
 
 /**
@@ -105,29 +104,29 @@ fun dateDigitToStr(digital: String): String {
     if (parts.size != 3) return ""
     try {
         if (parts[0].toInt() !in 1..31) return ""
-        if (parts[0].first() == '0') result.append(parts[0].toInt())
-        else result.append(parts[0])
-        val month = when (parts[1]) {
-            "01" -> " января "
-            "02" -> " февраля "
-            "03" -> " марта "
-            "04" -> " апреля "
-            "05" -> " мая "
-            "06" -> " июня "
-            "07" -> " июля "
-            "08" -> " августа "
-            "09" -> " сентября "
-            "10" -> " октября "
-            "11" -> " ноября "
-            "12" -> " декабря "
-            else -> return ""
-        }
-        result.append(month)
-        if (parts[2].toInt() >= 0) result.append(parts[2]) else return ""
-        return result.toString()
     } catch (e: NumberFormatException) {
         return ""
     }
+    if (parts[0].first() == '0') result.append(parts[0].toInt())
+    else result.append(parts[0])
+    val month = when (parts[1]) {
+        "01" -> " января "
+        "02" -> " февраля "
+        "03" -> " марта "
+        "04" -> " апреля "
+        "05" -> " мая "
+        "06" -> " июня "
+        "07" -> " июля "
+        "08" -> " августа "
+        "09" -> " сентября "
+        "10" -> " октября "
+        "11" -> " ноября "
+        "12" -> " декабря "
+        else -> return ""
+    }
+    result.append(month)
+    if (parts[2].toInt() >= 0) result.append(parts[2]) else return ""
+    return result.toString()
 }
 
 /**
@@ -165,16 +164,16 @@ fun flattenPhoneNumber(phone: String): String {
  */
 fun bestLongJump(jumps: String): Int {
     if (jumps == "") return -1
-    return try {
-        var result = -1
-        val jump = jumps.split(Regex(" +"))
-        for (element in jump) {
+    var result = -1
+    val jump = jumps.split(Regex(" +"))
+    for (element in jump) {
+        try {
             if (element !in "%-" && element.toInt() > result) result = element.toInt()
+        } catch (e: NumberFormatException) {
+            return -1
         }
-        result
-    } catch (e: NumberFormatException) {
-        return -1
     }
+    return result
 }
 
 /**
@@ -188,20 +187,13 @@ fun bestLongJump(jumps: String): Int {
  * При нарушении формата входной строки вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    for (char in jumps)
-        if (char !in '0'..'9' && char !in "%+- ")
-            return -1
     val jump = jumps.split(" ")
-    var plusNumber = 0
-    var minusNumber = 0
-    for (element in jump)
-        for (char in element) {
-            if (char == '+') plusNumber += 1
-            if (char == '-') minusNumber += 1
-            if (minusNumber > 1 || plusNumber > 1) return -1
-            plusNumber = 0
-            minusNumber = 0
-        }
+    for (i in 0 until jump.size step 2)
+        if (jump[i].matches(Regex("""(\D*)""")))
+            return -1
+    for (i in 1 until jump.size step 2)
+        if (jump[i].matches(Regex("""^(?!%*\+).+$""")) && jump[i].matches(Regex("""^(?!%*-).+$""")))
+            return -1
     var result = -1
     for (i in 1 until jump.size) {
         if ("+" in jump[i] && jump[i - 1].toInt() > result)
@@ -221,20 +213,25 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    return try {
-        val expressionList = expression.split(" ")
-        var result = expressionList[0].toInt()
-        for (i in 1 until expressionList.size step 2) {
+    val expressionList = expression.split(" ")
+    var result = 0
+    try {
+        result += expressionList[0].toInt()
+    } catch (e: NumberFormatException) {
+        throw IllegalArgumentException()
+    }
+    for (i in 1 until expressionList.size step 2) {
+        try {
             when {
                 expressionList[i] == "+" -> result += expressionList[i + 1].toInt()
                 expressionList[i] == "-" -> result -= expressionList[i + 1].toInt()
-                else -> throw IllegalArgumentException("Description")
+                else -> throw IllegalArgumentException()
             }
+        } catch (e: NumberFormatException) {
+            throw IllegalArgumentException()
         }
-        result
-    } catch (e: NumberFormatException) {
-        throw IllegalArgumentException("Description")
     }
+    return result
 }
 
 /**
@@ -247,19 +244,16 @@ fun plusMinus(expression: String): Int {
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
 fun firstDuplicateIndex(str: String): Int {
-    val strList = str.split(" ")
+    val strList = str.toLowerCase().split(" ")
     var duplicateWordNumber = -1
-    var result = -1
     for (i in 0 until strList.size - 1) {
-        if (strList[i].toLowerCase() == strList[i + 1].toLowerCase()) {
+        if (strList[i] == strList[i + 1]) {
             duplicateWordNumber = i
             break
         }
     }
-    for (i in 0 until duplicateWordNumber)
-        result += strList[i].length + 1
-    return if (result == -1) result
-    else result + 1
+    return if (duplicateWordNumber == -1) -1
+    else strList.subList(0, duplicateWordNumber).joinToString(separator = " ").length + 1
 }
 
 /**
@@ -276,20 +270,18 @@ fun firstDuplicateIndex(str: String): Int {
 fun mostExpensive(description: String): String {
     if (description == "") return ""
     val descriptionList = description.split("; ")
-    val priceList = mutableListOf<Double>()
-    try {
-        return try {
-            for (i in 0 until descriptionList.size)
-                priceList.add(descriptionList[i].split(" ")[1].toDouble())
-            descriptionList[priceList.indexOf(priceList.max())].split(" ")[0]
-        } catch (e: NumberFormatException) {
+    for (element in descriptionList)
+        if (element.matches(Regex("""^(?![а-яА-Я]+ (\d)+\.(\d)+).+$""")))
             return ""
-        }
-    } catch (e: IndexOutOfBoundsException) {
+    val priceList = mutableListOf<Double>()
+    return try {
+        for (element in descriptionList)
+            priceList.add(element.split(" ")[1].toDouble())
+        descriptionList[priceList.indexOf(priceList.max())].split(" ")[0]
+    } catch (e: NumberFormatException) {
         return ""
     }
 }
-
 
 /**
  * Сложная
@@ -312,7 +304,7 @@ fun fromRoman(roman: String): Int {
             roman[i] == 'C' && roman[i + 1] in "MD" -> result -= 100
             roman[i] == 'C' -> result += 100
             roman[i] == 'L' && roman[i + 1] !in "MDC" -> result += 50
-            roman[i] == 'X' && roman[i + 1] !in "MD" && roman[i + 1] in "CL" -> result -= 10
+            roman[i] == 'X' && roman[i + 1] in "CL" -> result -= 10
             roman[i] == 'X' && roman[i + 1] !in "MD" -> result += 10
             roman[i] == 'V' && roman[i + 1] in "IV" -> result += 5
             roman[i] == 'I' && roman[i + 1] in "VX" -> result -= 1
@@ -371,14 +363,77 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
-    if ('[' in commands && ']' !in commands) throw IllegalArgumentException()
     for (char in commands)
         if (char !in "><+-[] ") throw IllegalArgumentException()
+    val conveyor = mutableListOf<Int>()
+    while (conveyor.size != cells)
+        conveyor.add(0)
+    var currentCell = cells / 2
+    var currentCharIndex = 0
+    var completedCommands = 0
+    val BracketLists = findPairToEveryBracket(commands)
+    while (currentCharIndex < commands.length && completedCommands < limit) {
+        when {
+            commands[currentCharIndex] == '>' -> {
+                currentCell++
+                if (currentCell > cells - 1) throw IllegalStateException()
+                currentCharIndex++
+                completedCommands++
+            }
+            commands[currentCharIndex] == '<' -> {
+                currentCell--
+                if (currentCell < 0) throw IllegalStateException()
+                currentCharIndex++
+                completedCommands++
+            }
+            commands[currentCharIndex] == '+' -> {
+                conveyor[currentCell]++
+                currentCharIndex++
+                completedCommands++
+            }
+            commands[currentCharIndex] == '-' -> {
+                conveyor[currentCell]--
+                currentCharIndex++
+                completedCommands++
+            }
+            commands[currentCharIndex] == '[' -> {
+                if (conveyor[currentCell] == 0) {
+                    for (i in 0 until BracketLists.second.size)
+                        if (currentCharIndex == BracketLists.second[i]) {
+                            currentCharIndex = BracketLists.first[i] + 1
+                            completedCommands++
+                        }
+                } else {
+                    currentCharIndex++
+                    completedCommands++
+                }
+            }
+            commands[currentCharIndex] == ']' -> {
+                if (conveyor[currentCell] != 0) {
+                    for (i in 0 until BracketLists.first.size)
+                        if (currentCharIndex == BracketLists.first[i]) {
+                            currentCharIndex = BracketLists.second[i] + 1
+                            completedCommands++
+                        }
+                } else {
+                    currentCharIndex++
+                    completedCommands++
+                }
+            }
+            commands[currentCharIndex] == ' ' -> {
+                currentCharIndex++
+                completedCommands++
+            }
+        }
+    }
+    return conveyor
+}
+
+fun findPairToEveryBracket(commands: String): Pair<MutableList<Int>, MutableList<Int>> {
+    if ('[' in commands && ']' !in commands) throw IllegalArgumentException()
     val regularBracketList = mutableListOf<Int>()
     val backwardBracketList = mutableListOf<Int>()
     var pairsOfBracketsNumber = 0
-    var backwardBracketNumber = 0
-    var regularBracketNumber = 0
     val commandsCopy = mutableListOf<Char>()
     for (char in commands)
         commandsCopy.add(char)
@@ -396,72 +451,10 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             }
         if (pairsOfBracketsNumber < backwardBracketList.size - 1) throw IllegalArgumentException()
     }
-    for (char in commands) {
-        if (char == '[') regularBracketNumber++
-        if (char == ']') backwardBracketNumber++
-    }
-    if (regularBracketNumber != backwardBracketNumber || (regularBracketNumber + backwardBracketNumber) / 2 != pairsOfBracketsNumber)
+    val regularBracketNumber = commands.count { it == '[' }
+    val backwardBracketNumber = commands.count { it == ']' }
+    if (regularBracketNumber != backwardBracketNumber ||
+            (regularBracketNumber + backwardBracketNumber) / 2 != pairsOfBracketsNumber)
         throw IllegalArgumentException()
-    val conveyer = mutableListOf<Int>()
-    while (conveyer.size != cells)
-        conveyer.add(0)
-    var currentCell = cells / 2
-    var currentCharIndex = 0
-    var completedCommands = 0
-    while (currentCharIndex < commands.length && completedCommands < limit) {
-        when {
-            commands[currentCharIndex] == '>' -> {
-                currentCell++
-                if (currentCell > cells - 1) throw IllegalStateException()
-                currentCharIndex++
-                completedCommands++
-            }
-            commands[currentCharIndex] == '<' -> {
-                currentCell--
-                if (currentCell < 0) throw IllegalStateException()
-                currentCharIndex++
-                completedCommands++
-            }
-            commands[currentCharIndex] == '+' -> {
-                conveyer[currentCell]++
-                currentCharIndex++
-                completedCommands++
-            }
-            commands[currentCharIndex] == '-' -> {
-                conveyer[currentCell]--
-                currentCharIndex++
-                completedCommands++
-            }
-            commands[currentCharIndex] == '[' -> {
-                if (conveyer[currentCell] == 0) {
-                    for (i in 0 until regularBracketList.size)
-                        if (currentCharIndex == regularBracketList[i]) {
-                            currentCharIndex = backwardBracketList[i] + 1
-                            completedCommands++
-                        }
-                } else {
-                    currentCharIndex++
-                    completedCommands++
-                }
-            }
-            commands[currentCharIndex] == ']' -> {
-                if (conveyer[currentCell] != 0) {
-                    for (i in 0 until backwardBracketList.size)
-                        if (currentCharIndex == backwardBracketList[i]) {
-                            currentCharIndex = regularBracketList[i] + 1
-                            completedCommands++
-                        }
-
-                } else {
-                    currentCharIndex++
-                    completedCommands++
-                }
-            }
-            commands[currentCharIndex] == ' ' -> {
-                currentCharIndex++
-                completedCommands++
-            }
-        }
-    }
-    return conveyer
+    return Pair(backwardBracketList, regularBracketList)
 }

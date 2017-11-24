@@ -145,9 +145,7 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
-fun times(a: List<Double>, b: List<Double>): Double = a.zip(b).map { it.first * it.second }.fold(0.0) { previousResult, element ->
-    previousResult + element
-}
+fun times(a: List<Double>, b: List<Double>): Double = a.zip(b).map { it.first * it.second }.sum()
 
 /**
  * Средняя
@@ -273,7 +271,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
  */
 fun decimalFromString(str: String, base: Int): Int {
     var number = 0
-    var baseInDegree = pow(base.toDouble(), str.length - 1.toDouble()).toInt()
+    var baseInDegree = pow(base.toDouble(), str.length - 1.0).toInt()
     for (char in str) {
         val digit = if (char <= '9') char - '0' else char - 'a' + 10
         number += digit * baseInDegree
@@ -293,8 +291,9 @@ fun decimalFromString(str: String, base: Int): Int {
 fun roman(n: Int): String {
     var number = n
     val result = StringBuilder()
-    val pairsList = listOf(Pair(1000, "M"), Pair(900, "CM"), Pair(500, "D"), Pair(400, "CD"), Pair(100, "C"), Pair(90, "XC"),
-            Pair(50, "L"), Pair(40, "XL"), Pair(10, "X"), Pair(9, "IX"), Pair(5, "V"), Pair(4, "IV"), Pair(1, "I"))
+    val pairsList = listOf(Pair(1000, "M"), Pair(900, "CM"), Pair(500, "D"), Pair(400, "CD"), Pair(100, "C"),
+            Pair(90, "XC"), Pair(50, "L"), Pair(40, "XL"), Pair(10, "X"), Pair(9, "IX"), Pair(5, "V"), Pair(4, "IV"),
+            Pair(1, "I"))
     for ((first, second) in pairsList) {
         result.append(second.repeat(number / first))
         number %= first
@@ -309,18 +308,22 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
+
+val units = mutableListOf("", "одна ", "две ", "три ", "четыре ", "пять ", "шесть ", "семь ", "восемь ", "девять ")
+val dozensAndUnits = listOf("десять ", "одиннадцать ", "двенадцать ", "тринадцать ", "четырнадцать ",
+        "пятнадцать ", "шестнадцать ", "семнадцать ", "восемнадцать ", "девятнадцать ")
+val dozens = listOf("", "", "двадцать ", "тридцать ", "сорок ", "пятьдесят ", "шестьдесят ", "семьдесят ",
+        "восемьдесят ", "девяносто ")
+val hundreds = listOf("", "сто ", "двести ", "триста ", "четыреста ", "пятьсот ", "шестьсот ", "семьсот ",
+        "восемьсот ", "девятьсот ")
+
 fun russian(n: Int): String {
-    val units = mutableListOf("", "одна ", "две ", "три ", "четыре ", "пять ", "шесть ", "семь ", "восемь ", "девять ")
-    val dozensAndUnits = listOf("десять ", "одиннадцать ", "двенадцать ", "тринадцать ", "четырнадцать ",
-            "пятнадцать ", "шестнадцать ", "семнадцать ", "восемнадцать ", "девятнадцать ")
-    val dozens = listOf("", "", "двадцать ", "тридцать ", "сорок ", "пятьдесят ", "шестьдесят ", "семьдесят ",
-            "восемьдесят ", "девяносто ")
-    val hundreds = listOf("", "сто ", "двести ", "триста ", "четыреста ", "пятьсот ", "шестьсот ", "семьсот ",
-            "восемьсот ", "девятьсот ")
+    units[1] = "одна "
+    units[2] = "две "
     val result = StringBuilder()
     val numberHundreds = n % 1000
     val numberThousands = n / 1000
-    result.append(writeDownANumberInWords(numberThousands, units, dozensAndUnits, dozens, hundreds))
+    result.append(writeDownANumberInWords(numberThousands))
     if (n / 1000 != 0) {
         when {
             numberThousands % 10 == 1 && numberThousands % 100 != 11 -> result.append("тысяча ")
@@ -330,12 +333,11 @@ fun russian(n: Int): String {
     }
     units[1] = "один "
     units[2] = "два "
-    result.append(writeDownANumberInWords(numberHundreds, units, dozensAndUnits, dozens, hundreds))
+    result.append(writeDownANumberInWords(numberHundreds))
     return result.toString().trim()
 }
 
-fun writeDownANumberInWords(n: Int, units: List<String>, dozensAndUnits: List<String>, dozens: List<String>,
-                            hundreds: List<String>): StringBuilder {
+fun writeDownANumberInWords(n: Int): StringBuilder {
     val result = StringBuilder()
     var number = n
     result.append(hundreds[number / 100])
