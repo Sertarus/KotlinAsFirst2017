@@ -253,9 +253,11 @@ fun firstDuplicateIndex(str: String): Int {
             break
         }
     }
-    return if (duplicateWordNumber == -1) -1
-    else if (duplicateWordNumber == 0) 0
-    else strList.subList(0, duplicateWordNumber).joinToString(separator = " ").length + 1
+    return when (duplicateWordNumber) {
+        -1 -> -1
+        0 -> 0
+        else -> strList.subList(0, duplicateWordNumber).joinToString(separator = " ").length + 1
+    }
 }
 
 /**
@@ -272,18 +274,16 @@ fun firstDuplicateIndex(str: String): Int {
 fun mostExpensive(description: String): String {
     if (description == "") return ""
     val descriptionList = description.split("; ")
-    for (element in descriptionList)
-        if (element.matches(Regex("""^(?!.+ (\d)+\.(\d)+).+$""")))
-            return ""
     val priceList = mutableListOf<Double>()
-    return try {
-        for (element in descriptionList)
-            priceList.add(element.split(" ")[1].toDouble())
-        descriptionList[priceList.indexOf(priceList.max())].split(" ")[0]
-    } catch (e: NumberFormatException) {
-        return ""
-    }
+    for (i in 0 until descriptionList.size)
+        try {
+            priceList.add(descriptionList[i].split(" ")[1].toDouble())
+        } catch (e: NumberFormatException) {
+            return ""
+        }
+    return descriptionList[priceList.indexOf(priceList.max())].split(" ")[0]
 }
+
 
 /**
  * Сложная
