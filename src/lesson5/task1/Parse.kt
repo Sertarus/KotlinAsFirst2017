@@ -254,7 +254,7 @@ fun firstDuplicateIndex(str: String): Int {
         }
     }
     return if (duplicateWordNumber == -1) -1
-    else if (duplicateWordNumber == 0) 1
+    else if (duplicateWordNumber == 0) 0
     else strList.subList(0, duplicateWordNumber).joinToString(separator = " ").length + 1
 }
 
