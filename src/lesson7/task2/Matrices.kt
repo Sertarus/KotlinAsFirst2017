@@ -1,8 +1,11 @@
 @file:Suppress("UNUSED_PARAMETER")
+
 package lesson7.task2
 
+import lesson7.task1.Cell
 import lesson7.task1.Matrix
 import lesson7.task1.createMatrix
+import java.lang.Math.min
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
 
@@ -59,7 +62,55 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
  * 10 11 12  5
  *  9  8  7  6
  */
-fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateSpiral(height: Int, width: Int): Matrix<Int> {
+    val matrix = createMatrix(height, width, 0)
+    var currentColumn = 0
+    var currentRow = 0
+    var counter = 1
+    while (counter < height * width + 1) {
+        while (currentColumn != width) {
+            matrix[Cell(currentRow, currentColumn)] = counter
+            counter++
+            currentColumn++
+            if (currentColumn == width || matrix[Cell(currentRow, currentColumn)] != 0) {
+                currentColumn--
+                currentRow++
+                break
+            }
+        }
+        while (currentRow != height) {
+            matrix[Cell(currentRow, currentColumn)] = counter
+            counter++
+            currentRow++
+            if (currentRow == height || matrix[Cell(currentRow, currentColumn)] != 0) {
+                currentRow--
+                currentColumn--
+                break
+            }
+        }
+        while (currentColumn != -1) {
+            matrix[Cell(currentRow, currentColumn)] = counter
+            counter++
+            currentColumn--
+            if (currentColumn == -1 || matrix[Cell(currentRow, currentColumn)] != 0) {
+                currentColumn++
+                currentRow--
+                break
+            }
+        }
+        while (currentRow != -1) {
+            matrix[Cell(currentRow, currentColumn)] = counter
+            counter++
+            currentRow--
+            if (currentRow == -1 || matrix[Cell(currentRow, currentColumn)] != 0) {
+                currentRow++
+                currentColumn++
+                break
+            }
+        }
+    }
+    return matrix
+}
 
 /**
  * Сложная
@@ -75,7 +126,53 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
  *  1  2  2  2  2  1
  *  1  1  1  1  1  1
  */
-fun generateRectangles(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateRectangles(height: Int, width: Int): Matrix<Int> {
+    val matrix = createMatrix(height, width, 0)
+    var currentColumn = 0
+    var currentRow = 0
+    var counter = 1
+    while (counter < Math.ceil(min(height, width) / 2.0)) {
+        while (currentColumn != width) {
+            matrix[Cell(currentRow, currentColumn)] = counter
+            currentColumn++
+            if (currentColumn == width || matrix[Cell(currentRow, currentColumn)] != 0) {
+                currentColumn--
+                currentRow++
+                break
+            }
+        }
+        while (currentRow != height) {
+            matrix[Cell(currentRow, currentColumn)] = counter
+            currentRow++
+            if (currentRow == height || matrix[Cell(currentRow, currentColumn)] != 0) {
+                currentRow--
+                currentColumn--
+                break
+            }
+        }
+        while (currentColumn != -1) {
+            matrix[Cell(currentRow, currentColumn)] = counter
+            currentColumn--
+            if (currentColumn == -1 || matrix[Cell(currentRow, currentColumn)] != 0) {
+                currentColumn++
+                currentRow--
+                break
+            }
+        }
+        while (currentRow != -1) {
+            matrix[Cell(currentRow, currentColumn)] = counter
+            counter++
+            currentRow--
+            if (currentRow == -1 || matrix[Cell(currentRow, currentColumn)] != 0) {
+                currentRow++
+                currentColumn++
+                break
+            }
+        }
+        counter++
+    }
+    return matrix
+}
 
 /**
  * Сложная
@@ -84,13 +181,19 @@ fun generateRectangles(height: Int, width: Int): Matrix<Int> = TODO()
  * в левый верхний угол 1, во вторую от угла диагональ 2 и 3 сверху вниз, в третью 4-6 сверху вниз и так далее.
  *
  * Пример для height = 5, width = 4:
- *  1  2  4  7
- *  3  5  8 11
- *  6  9 12 15
- * 10 13 16 18
- * 14 17 19 20
+ *  1  2  4  7 11
+ *  3  5  8 12 16
+ *  6  9 13 17 20
+ * 10 14 18 21 23
+ * 15 19 22 24 25
  */
-fun generateSnake(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateSnake(height: Int, width: Int): Matrix<Int> {
+    val matrix = createMatrix(height, width, 0)
+    for (i in 0 until height)
+        for (k in 0 until width)
+            matrix[Cell(i, k)] = 1 + k + 2 * i + k * i
+    return matrix
+}
 
 /**
  * Средняя
@@ -103,7 +206,15 @@ fun generateSnake(height: Int, width: Int): Matrix<Int> = TODO()
  * 4 5 6      8 5 2
  * 7 8 9      9 6 3
  */
-fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
+fun <E> rotate(matrix: Matrix<E>): Matrix<E> {
+    if (matrix.height != matrix.width) throw IllegalArgumentException()
+    val result = createMatrix(matrix.height, matrix.width, matrix[0, 0])
+    for (i in matrix.width - 1 downTo 0)
+        for (k in 0 until matrix.height)
+            result[Cell(k, i)] = matrix[Cell(matrix.width - 1 - i, k)]
+    println(result)
+    return result
+}
 
 /**
  * Сложная
@@ -118,7 +229,26 @@ fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
  * 1 2 3
  * 3 1 2
  */
-fun isLatinSquare(matrix: Matrix<Int>): Boolean = TODO()
+fun isLatinSquare(matrix: Matrix<Int>): Boolean {
+    if (matrix.height != matrix.width) return false
+    var firstSum = 0
+    for (i in matrix.height downTo 1)
+        firstSum += i
+    var secondSum = 0
+    for (i in 0 until matrix.width) {
+        for (k in 0 until matrix.height)
+            secondSum += matrix[Cell(k, i)]
+        if (firstSum != secondSum) return false
+        secondSum = 0
+    }
+    for (k in 0 until matrix.height) {
+        for (i in 0 until matrix.width)
+            secondSum += matrix[Cell(k, i)]
+        if (firstSum != secondSum) return false
+        secondSum = 0
+    }
+    return true
+}
 
 /**
  * Средняя
