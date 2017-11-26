@@ -153,7 +153,7 @@ class Line private constructor(val b: Double, val angle: Double) {
         val secondSin = Math.sin(other.angle)
         val secondCos = Math.cos(other.angle)
         val x = (firstCos * other.b - b * secondCos) / (firstSin * secondCos - secondSin * firstCos)
-        val y = (other.b * firstSin - b * secondSin) / (secondCos * firstSin - firstCos * secondSin)
+        val y = (x * firstSin + b) / firstCos
         return Point(x, y)
     }
 
@@ -183,7 +183,7 @@ fun lineBySegment(s: Segment): Line {
     val slopeFromEndToBeginningLessThan90 = s.end.x < s.begin.x && s.end.y < s.begin.y
     return if (slopeFromBeginningToEndLessThan90 || slopeFromEndToBeginningLessThan90)
         Line(s.begin, angle)
-    else Line(s.begin, Math.PI - angle)
+           else Line(s.begin, Math.PI - angle)
 }
 
 

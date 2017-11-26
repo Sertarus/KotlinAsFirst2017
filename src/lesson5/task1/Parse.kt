@@ -247,17 +247,15 @@ fun plusMinus(expression: String): Int {
 fun firstDuplicateIndex(str: String): Int {
     val strList = str.toLowerCase().split(" ")
     var duplicateWordNumber = -1
+    var stringLength = 0
     for (i in 0 until strList.size - 1) {
         if (strList[i] == strList[i + 1]) {
             duplicateWordNumber = i
             break
         }
+        stringLength += strList[i].length + 1
     }
-    return when (duplicateWordNumber) {
-        -1 -> -1
-        0 -> 0
-        else -> strList.subList(0, duplicateWordNumber).joinToString(separator = " ").length + 1
-    }
+    return if (duplicateWordNumber == -1) -1 else stringLength
 }
 
 /**
@@ -373,7 +371,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var currentCell = cells / 2
     var currentCharIndex = 0
     var completedCommands = 0
-    val BracketLists = findPairToEveryBracket(commands)
+    val bracketList = findPairToEveryBracket(commands)
     while (currentCharIndex < commands.length && completedCommands < limit) {
         when {
             commands[currentCharIndex] == '>' -> {
@@ -400,9 +398,9 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             }
             commands[currentCharIndex] == '[' -> {
                 if (conveyor[currentCell] == 0) {
-                    for (i in 0 until BracketLists.second.size)
-                        if (currentCharIndex == BracketLists.second[i]) {
-                            currentCharIndex = BracketLists.first[i] + 1
+                    for ((key, value) in bracketList)
+                        if (currentCharIndex == value) {
+                            currentCharIndex = key + 1
                             completedCommands++
                         }
                 } else {
@@ -412,9 +410,9 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             }
             commands[currentCharIndex] == ']' -> {
                 if (conveyor[currentCell] != 0) {
-                    for (i in 0 until BracketLists.first.size)
-                        if (currentCharIndex == BracketLists.first[i]) {
-                            currentCharIndex = BracketLists.second[i] + 1
+                    for ((key, value) in bracketList)
+                        if (currentCharIndex == key) {
+                            currentCharIndex = value + 1
                             completedCommands++
                         }
                 } else {
@@ -431,32 +429,30 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     return conveyor
 }
 
-fun findPairToEveryBracket(commands: String): Pair<MutableList<Int>, MutableList<Int>> {
+fun findPairToEveryBracket(commands: String): MutableMap<Int, Int> {
     if ('[' in commands && ']' !in commands) throw IllegalArgumentException()
-    val regularBracketList = mutableListOf<Int>()
-    val backwardBracketList = mutableListOf<Int>()
+    val bracketList = mutableMapOf<Int, Int>()
     var pairsOfBracketsNumber = 0
     val commandsCopy = mutableListOf<Char>()
     for (char in commands)
         commandsCopy.add(char)
     while ('[' in commandsCopy) {
         for (i in 0 until commandsCopy.size)
-            if (commandsCopy[i] == ']') {
-                backwardBracketList.add(i)
-                for (k in i downTo 0)
+            if (commandsCopy[i] == ']')
+                for (k in i downTo 0) {
                     if (commandsCopy[k] == '[') {
-                        regularBracketList.add(k)
+                        bracketList.put(i, k)
                         commandsCopy[k] = ' '
                         pairsOfBracketsNumber++
                         break
                     }
-            }
-        if (pairsOfBracketsNumber < backwardBracketList.size - 1) throw IllegalArgumentException()
+                }
+        if (pairsOfBracketsNumber < bracketList.size - 1) throw IllegalArgumentException()
     }
     val regularBracketNumber = commands.count { it == '[' }
     val backwardBracketNumber = commands.count { it == ']' }
     if (regularBracketNumber != backwardBracketNumber ||
             (regularBracketNumber + backwardBracketNumber) / 2 != pairsOfBracketsNumber)
         throw IllegalArgumentException()
-    return Pair(backwardBracketList, regularBracketList)
+    return bracketList
 }
