@@ -430,7 +430,10 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
 }
 
 fun findPairToEveryBracket(commands: String): MutableMap<Int, Int> {
-    if ('[' in commands && ']' !in commands) throw IllegalArgumentException()
+    val regularBracketNumber = commands.count { it == '[' }
+    val backwardBracketNumber = commands.count { it == ']' }
+    if ('[' in commands && ']' !in commands || regularBracketNumber != backwardBracketNumber)
+        throw IllegalArgumentException()
     val bracketList = mutableMapOf<Int, Int>()
     var pairsOfBracketsNumber = 0
     val commandsCopy = mutableListOf<Char>()
@@ -438,21 +441,17 @@ fun findPairToEveryBracket(commands: String): MutableMap<Int, Int> {
         commandsCopy.add(char)
     while ('[' in commandsCopy) {
         for (i in 0 until commandsCopy.size)
-            if (commandsCopy[i] == ']')
-                for (k in i downTo 0) {
+            if (commandsCopy[i] == ']') {
+                for (k in i downTo 0)
                     if (commandsCopy[k] == '[') {
                         bracketList.put(i, k)
                         commandsCopy[k] = ' '
                         pairsOfBracketsNumber++
                         break
                     }
-                }
+            }
         if (pairsOfBracketsNumber < bracketList.size - 1) throw IllegalArgumentException()
     }
-    val regularBracketNumber = commands.count { it == '[' }
-    val backwardBracketNumber = commands.count { it == ']' }
-    if (regularBracketNumber != backwardBracketNumber ||
-            (regularBracketNumber + backwardBracketNumber) / 2 != pairsOfBracketsNumber)
-        throw IllegalArgumentException()
+    if ((regularBracketNumber + backwardBracketNumber) / 2 != pairsOfBracketsNumber) throw IllegalArgumentException()
     return bracketList
 }
