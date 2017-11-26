@@ -262,8 +262,11 @@ fun minContainingCircle(vararg points: Point): Circle {
     if (points.size == 1) return Circle(points[0], 0.0)
     var circle = circleByDiameter(diameter(*points))
     var contain = true
-    for (i in points)
-        if (!circle.contains(i)) contain = false
+    for (p in points)
+        if (!circle.contains(p)) {
+            contain = false
+            break
+        }
     if (contain) return circle
     circle = Circle(Point(0.0, 0.0), Double.MAX_VALUE)
     contain = true
@@ -271,7 +274,10 @@ fun minContainingCircle(vararg points: Point): Circle {
         for (k in 0 until points.size)
             for (j in 0 until points.size) {
                 for (p in points)
-                    if (!circleByThreePoints(points[i], points[k], points[j]).contains(p)) contain = false
+                    if (!circleByThreePoints(points[i], points[k], points[j]).contains(p)) {
+                        contain = false
+                        break
+                    }
                 if (contain && circleByThreePoints(points[i], points[k], points[j]).radius < circle.radius)
                     circle = circleByThreePoints(points[i], points[k], points[j])
                 contain = true
