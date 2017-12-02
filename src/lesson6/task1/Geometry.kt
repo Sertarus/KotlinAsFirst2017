@@ -153,7 +153,7 @@ class Line private constructor(val b: Double, val angle: Double) {
         val secondSin = Math.sin(other.angle)
         val secondCos = Math.cos(other.angle)
         val x = (firstCos * other.b - b * secondCos) / (firstSin * secondCos - secondSin * firstCos)
-        val y = (x * firstSin + b) / firstCos
+        val y = (other.b * firstSin - b * secondSin) / (secondCos * firstSin - firstCos * secondSin)
         return Point(x, y)
     }
 
@@ -182,7 +182,7 @@ fun lineBySegment(s: Segment): Line {
     val slopeFromBeginningToEndLessThan90 = s.begin.x < s.end.x && s.begin.y < s.end.y
     val slopeFromEndToBeginningLessThan90 = s.end.x < s.begin.x && s.end.y < s.begin.y
     return if (slopeFromBeginningToEndLessThan90 || slopeFromEndToBeginningLessThan90)
-        Line(s.begin, angle)
+                Line(s.begin, angle)
            else Line(s.begin, Math.PI - angle)
 }
 
@@ -261,26 +261,13 @@ fun minContainingCircle(vararg points: Point): Circle {
     if (points.isEmpty()) throw IllegalArgumentException()
     if (points.size == 1) return Circle(points[0], 0.0)
     var circle = circleByDiameter(diameter(*points))
-    var contain = true
+    val firstDiameterPoint = diameter(*points).begin
+    val secondDiameterPoint = diameter(*points).end
     for (p in points)
         if (!circle.contains(p)) {
-            contain = false
-            break
+            for (point in points)
+                if (!circleByThreePoints(firstDiameterPoint, secondDiameterPoint, p).contains(p)) break
+            circle = circleByThreePoints(firstDiameterPoint, secondDiameterPoint, p)
         }
-    if (contain) return circle
-    circle = Circle(Point(0.0, 0.0), Double.MAX_VALUE)
-    contain = true
-    for (i in 0 until points.size)
-        for (k in 0 until points.size)
-            for (j in 0 until points.size) {
-                for (p in points)
-                    if (!circleByThreePoints(points[i], points[k], points[j]).contains(p)) {
-                        contain = false
-                        break
-                    }
-                if (contain && circleByThreePoints(points[i], points[k], points[j]).radius < circle.radius)
-                    circle = circleByThreePoints(points[i], points[k], points[j])
-                contain = true
-            }
     return circle
 }
