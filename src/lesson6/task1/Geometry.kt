@@ -181,8 +181,7 @@ fun lineBySegment(s: Segment): Line {
     val angle = Math.atan(oppositeCatheter / contiguousCatheter)
     val slopeFromBeginningToEndLessThan90 = s.begin.x < s.end.x && s.begin.y < s.end.y
     val slopeFromEndToBeginningLessThan90 = s.end.x < s.begin.x && s.end.y < s.begin.y
-    return if (slopeFromBeginningToEndLessThan90 || slopeFromEndToBeginningLessThan90)
-                Line(s.begin, angle)
+    return if   (slopeFromBeginningToEndLessThan90 || slopeFromEndToBeginningLessThan90) Line(s.begin, angle)
            else Line(s.begin, Math.PI - angle)
 }
 
