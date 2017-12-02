@@ -264,9 +264,10 @@ fun minContainingCircle(vararg points: Point): Circle {
     val secondDiameterPoint = diameter(*points).end
     for (p in points)
         if (!circle.contains(p)) {
-            for (point in points)
-                if (!circleByThreePoints(firstDiameterPoint, secondDiameterPoint, p).contains(p)) break
-            circle = circleByThreePoints(firstDiameterPoint, secondDiameterPoint, p)
+            for (point in points) {
+                if (!circleByThreePoints(firstDiameterPoint, secondDiameterPoint, p).contains(point)) break
+                circle = circleByThreePoints(firstDiameterPoint, secondDiameterPoint, p)
+            }
         }
     return circle
 }

@@ -432,8 +432,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
 fun findPairToEveryBracket(commands: String): MutableMap<Int, Int> {
     val regularBracketNumber = commands.count { it == '[' }
     val backwardBracketNumber = commands.count { it == ']' }
-    if ('[' in commands && ']' !in commands || regularBracketNumber != backwardBracketNumber)
-        throw IllegalArgumentException()
+    if ('[' in commands && ']' !in commands || regularBracketNumber != backwardBracketNumber ||
+            commands.indexOf(']') < commands.indexOf('[')) throw IllegalArgumentException()
     val bracketList = mutableMapOf<Int, Int>()
     var pairsOfBracketsNumber = 0
     val commandsCopy = mutableListOf<Char>()
