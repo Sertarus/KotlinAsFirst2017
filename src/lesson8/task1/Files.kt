@@ -53,7 +53,17 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val result = mutableMapOf<String, Int>()
+    for (element in substrings)
+        result.put(element, 0)
+    for (line in File(inputName).readLines())
+        for (word in line.split(Regex("""\s+""")))
+            for (element in result)
+                element.setValue(element.value +
+                        element.key.toLowerCase().toRegex().findAll(word.toLowerCase()).count())
+    return result
+}
 
 
 /**
@@ -70,7 +80,24 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).printWriter()
+    for (line in File(inputName).readLines()) {
+        val newLine = StringBuilder()
+        newLine.append(line.first())
+        for (i in 1 until line.length) {
+            when {
+                line[i] == 'ы' && line[i - 1] in "ЖжЧчШшЩщ" -> newLine.append('и')
+                line[i] == 'Ы' && line[i - 1] in "ЖжЧчШшЩщ" -> newLine.append('И')
+                line[i] == 'я' && line[i - 1] in "ЖжЧчШшЩщ" -> newLine.append('а')
+                line[i] == 'Я' && line[i - 1] in "ЖжЧчШшЩщ" -> newLine.append('А')
+                line[i] == 'ю' && line[i - 1] in "ЖжЧчШшЩщ" -> newLine.append('у')
+                line[i] == 'Ю' && line[i - 1] in "ЖжЧчШшЩщ" -> newLine.append('У')
+                else -> newLine.append(line[i])
+            }
+        }
+        outputStream.println(newLine)
+    }
+    outputStream.close()
 }
 
 /**
@@ -91,7 +118,24 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).printWriter()
+    var longestLineLength = 0
+    for (line in File(inputName).readLines())
+        if (line.length > longestLineLength) longestLineLength = line.length - 1
+    for (line in File(inputName).readLines()) {
+        val newLine = StringBuilder()
+        if (line.isEmpty())
+            newLine.append(" ".repeat(longestLineLength / 2))
+        else {
+            newLine.append(line.trim())
+            val firstSymbol = newLine.first()
+            while (newLine.indexOf(firstSymbol) + 1 < longestLineLength - newLine.indexOf(newLine.last()))
+                (newLine.reverse().append(" ")).reverse()
+        }
+        outputStream.println(newLine)
+        println(newLine)
+    }
+    outputStream.close()
 }
 
 /**
@@ -122,7 +166,37 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).printWriter()
+    var longestLineLength = 0
+    for (line in File(inputName).readLines())
+        if (line.length > longestLineLength) longestLineLength = line.length - 1
+    for (line in File(inputName).readLines()) {
+        val newLine = StringBuilder()
+        var numberOfWords = -1
+        for (word in line.trim().split(Regex("""\s+""")))
+            numberOfWords++
+        if (Regex("""\s*""").matches(line))
+            outputStream.println("")
+        else if (numberOfWords == 0) outputStream.println(line.trim())
+        else {
+            val numberOfGaps = longestLineLength - line.trim().lastIndexOf(line.trim().last()) - 2
+            println(numberOfGaps)
+            if (numberOfGaps > 0) {
+                val numberOfGapsAfterEveryWord = numberOfGaps / numberOfWords
+                var extraGaps = numberOfGaps % numberOfWords
+                for (word in line.trim().split(Regex("""\s+"""))) {
+                    newLine.append("$word ")
+                    newLine.append(" ".repeat(numberOfGapsAfterEveryWord))
+                    if (extraGaps != 0) {
+                        newLine.append(" ")
+                        extraGaps--
+                    }
+                }
+                outputStream.println(newLine.trim())
+            } else outputStream.println(line.trim())
+        }
+    }
+    outputStream.close()
 }
 
 /**
