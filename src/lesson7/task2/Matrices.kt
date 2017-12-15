@@ -72,7 +72,7 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> {
     var numberOfCompletedColumns = 0
     while (counter <= height * width) {
         if (counter <= height * width)
-        for (i in 1 until width - numberOfCompletedColumns ) {
+        while (currentColumn <= width - 1 - numberOfCompletedColumns) {
             matrix[Cell(currentRow, currentColumn)] = counter
             counter++
             currentColumn++
@@ -80,7 +80,7 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> {
         currentColumn--
         currentRow++
         if (counter <= height * width)
-        for (i in 1 until height - numberOfCompletedRows) {
+            while (currentRow <= height - 1 - numberOfCompletedRows) {
             matrix[Cell(currentRow, currentColumn)] = counter
             counter++
             currentRow++
@@ -88,7 +88,7 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> {
         currentRow--
         currentColumn--
         if (counter <= height * width)
-        for (i in 1 until width - numberOfCompletedColumns) {
+            while (currentColumn >= 0 + numberOfCompletedColumns) {
             matrix[Cell(currentRow, currentColumn)] = counter
             counter++
             currentColumn--
@@ -97,7 +97,7 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> {
         currentRow--
         numberOfCompletedRows++
         if (counter <= height * width)
-        for (i in 1 until height - numberOfCompletedRows) {
+            while (currentRow >= 0 + numberOfCompletedRows) {
             matrix[Cell(currentRow, currentColumn)] = counter
             counter++
             currentRow--
@@ -170,7 +170,6 @@ fun generateSnake(height: Int, width: Int): Matrix<Int> {
             }
         }
     }
-    println(matrix)
     return matrix
 }
 
@@ -191,7 +190,6 @@ fun <E> rotate(matrix: Matrix<E>): Matrix<E> {
     for (i in matrix.width - 1 downTo 0)
         for (k in 0 until matrix.height)
             result[Cell(k, i)] = matrix[Cell(matrix.width - 1 - i, k)]
-    println(result)
     return result
 }
 

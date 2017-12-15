@@ -121,19 +121,16 @@ fun centerFile(inputName: String, outputName: String) {
     val outputStream = File(outputName).printWriter()
     var longestLineLength = 0
     for (line in File(inputName).readLines())
-        if (line.length > longestLineLength) longestLineLength = line.length
+        if (line.trim().length > longestLineLength) longestLineLength = line.trim().length
     for (line in File(inputName).readLines()) {
         val newLine = StringBuilder()
         if (line.isEmpty())
             newLine.append(" ".repeat(longestLineLength / 2))
         else {
+            newLine.append(" ".repeat((longestLineLength - line.trim().length) / 2))
             newLine.append(line.trim())
-            val firstSymbol = newLine.first()
-            while (newLine.indexOf(firstSymbol) + 1 < longestLineLength - newLine.lastIndexOf(newLine.last()))
-                (newLine.reverse().append(" ")).reverse()
         }
         outputStream.println(newLine)
-        println(newLine)
     }
     outputStream.close()
 }
@@ -169,7 +166,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val outputStream = File(outputName).printWriter()
     var longestLineLength = 0
     for (line in File(inputName).readLines())
-        if (line.length > longestLineLength) longestLineLength = line.length
+        if (line.trim().length > longestLineLength) longestLineLength = line.trim().length
     for (line in File(inputName).readLines()) {
         val newLine = StringBuilder()
         var numberOfWords = -1
@@ -183,8 +180,6 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         else if (numberOfWords == 0) outputStream.println(line.trim())
         else {
             val numberOfGaps = longestLineLength - numberOfSymbolsWithoutGaps
-            println(line)
-            println(numberOfSymbolsWithoutGaps)
             if (numberOfGaps > 0) {
                 val numberOfGapsAfterEveryWord = numberOfGaps / numberOfWords
                 var extraGaps = numberOfGaps % numberOfWords
