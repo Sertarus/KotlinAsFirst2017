@@ -63,51 +63,48 @@ operator fun Matrix<Int>.plus(other: Matrix<Int>): Matrix<Int> {
  *  9  8  7  6
  */
 fun generateSpiral(height: Int, width: Int): Matrix<Int> {
-    val matrix = createMatrix(height, width, 0)
-    var currentColumn = 0
+    if (height == 1 && width == 1) return createMatrix(1,1,1)
+    val matrix = createMatrix(height, width, 1)
+    var currentColumn = 1
     var currentRow = 0
-    var counter = 1
-    while (counter < height * width + 1) {
-        while (currentColumn != width) {
+    var counter = 2
+    var numberOfCompletedRows = 0
+    var numberOfCompletedColumns = 0
+    while (counter <= height * width) {
+        if (counter <= height * width)
+        for (i in 1 until width - numberOfCompletedColumns ) {
             matrix[Cell(currentRow, currentColumn)] = counter
             counter++
             currentColumn++
-            if (currentColumn == width || matrix[Cell(currentRow, currentColumn)] != 0) {
-                currentColumn--
-                currentRow++
-                break
-            }
         }
-        while (currentRow != height) {
+        currentColumn--
+        currentRow++
+        if (counter <= height * width)
+        for (i in 1 until height - numberOfCompletedRows) {
             matrix[Cell(currentRow, currentColumn)] = counter
             counter++
             currentRow++
-            if (currentRow == height || matrix[Cell(currentRow, currentColumn)] != 0) {
-                currentRow--
-                currentColumn--
-                break
-            }
         }
-        while (currentColumn != -1) {
+        currentRow--
+        currentColumn--
+        if (counter <= height * width)
+        for (i in 1 until width - numberOfCompletedColumns) {
             matrix[Cell(currentRow, currentColumn)] = counter
             counter++
             currentColumn--
-            if (currentColumn == -1 || matrix[Cell(currentRow, currentColumn)] != 0) {
-                currentColumn++
-                currentRow--
-                break
-            }
         }
-        while (currentRow != -1) {
+        currentColumn++
+        currentRow--
+        numberOfCompletedRows++
+        if (counter <= height * width)
+        for (i in 1 until height - numberOfCompletedRows) {
             matrix[Cell(currentRow, currentColumn)] = counter
             counter++
             currentRow--
-            if (currentRow == -1 || matrix[Cell(currentRow, currentColumn)] != 0) {
-                currentRow++
-                currentColumn++
-                break
-            }
         }
+        numberOfCompletedColumns++
+        currentRow++
+        currentColumn++
     }
     return matrix
 }
@@ -127,50 +124,10 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> {
  *  1  1  1  1  1  1
  */
 fun generateRectangles(height: Int, width: Int): Matrix<Int> {
-    val matrix = createMatrix(height, width, 0)
-    var currentColumn = 0
-    var currentRow = 0
-    var counter = 1
-    while (counter < Math.ceil(min(height, width) / 2.0)) {
-        while (currentColumn != width) {
-            matrix[Cell(currentRow, currentColumn)] = counter
-            currentColumn++
-            if (currentColumn == width || matrix[Cell(currentRow, currentColumn)] != 0) {
-                currentColumn--
-                currentRow++
-                break
-            }
-        }
-        while (currentRow != height) {
-            matrix[Cell(currentRow, currentColumn)] = counter
-            currentRow++
-            if (currentRow == height || matrix[Cell(currentRow, currentColumn)] != 0) {
-                currentRow--
-                currentColumn--
-                break
-            }
-        }
-        while (currentColumn != -1) {
-            matrix[Cell(currentRow, currentColumn)] = counter
-            currentColumn--
-            if (currentColumn == -1 || matrix[Cell(currentRow, currentColumn)] != 0) {
-                currentColumn++
-                currentRow--
-                break
-            }
-        }
-        while (currentRow != -1) {
-            matrix[Cell(currentRow, currentColumn)] = counter
-            counter++
-            currentRow--
-            if (currentRow == -1 || matrix[Cell(currentRow, currentColumn)] != 0) {
-                currentRow++
-                currentColumn++
-                break
-            }
-        }
-        counter++
-    }
+    val matrix = createMatrix(height, width, 1)
+    for (i in 0 until height)
+        for (k in 0 until width)
+            matrix[Cell(i, k)] = min(min(i,k),min(height - i-1, width - k-1)) + 1
     return matrix
 }
 
@@ -188,10 +145,32 @@ fun generateRectangles(height: Int, width: Int): Matrix<Int> {
  * 15 19 22 24 25
  */
 fun generateSnake(height: Int, width: Int): Matrix<Int> {
-    val matrix = createMatrix(height, width, 0)
-    for (i in 0 until height)
-        for (k in 0 until width)
-            matrix[Cell(i, k)] = 1 + k + 2 * i + k * i
+    if (height == 1 && width == 1) return createMatrix(1,1,1)
+    val matrix = createMatrix(height, width, 1)
+    var counter = 2
+    while (counter <= height * width) {
+        for (i in 1 until width) {
+            var currentColumn = i
+            var currentRow = 0
+            while (currentRow < height && currentColumn >= 0 && counter <= height * width) {
+                matrix[Cell(currentRow, currentColumn)] = counter
+                counter++
+                currentRow++
+                currentColumn--
+            }
+        }
+        for (i in 1 until height) {
+            var currentColumn = width - 1
+            var currentRow = i
+            while (currentColumn >= 0 && currentRow < height && counter <= height * width) {
+                matrix[Cell(currentRow, currentColumn)] = counter
+                counter++
+                currentRow++
+                currentColumn--
+            }
+        }
+    }
+    println(matrix)
     return matrix
 }
 

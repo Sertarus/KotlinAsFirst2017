@@ -121,7 +121,7 @@ fun centerFile(inputName: String, outputName: String) {
     val outputStream = File(outputName).printWriter()
     var longestLineLength = 0
     for (line in File(inputName).readLines())
-        if (line.length > longestLineLength) longestLineLength = line.length - 1
+        if (line.length > longestLineLength) longestLineLength = line.length
     for (line in File(inputName).readLines()) {
         val newLine = StringBuilder()
         if (line.isEmpty())
@@ -129,7 +129,7 @@ fun centerFile(inputName: String, outputName: String) {
         else {
             newLine.append(line.trim())
             val firstSymbol = newLine.first()
-            while (newLine.indexOf(firstSymbol) + 1 < longestLineLength - newLine.indexOf(newLine.last()))
+            while (newLine.indexOf(firstSymbol) + 1 < longestLineLength - newLine.lastIndexOf(newLine.last()))
                 (newLine.reverse().append(" ")).reverse()
         }
         outputStream.println(newLine)
@@ -169,23 +169,27 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     val outputStream = File(outputName).printWriter()
     var longestLineLength = 0
     for (line in File(inputName).readLines())
-        if (line.length > longestLineLength) longestLineLength = line.length - 1
+        if (line.length > longestLineLength) longestLineLength = line.length
     for (line in File(inputName).readLines()) {
         val newLine = StringBuilder()
         var numberOfWords = -1
-        for (word in line.trim().split(Regex("""\s+""")))
+        var numberOfSymbolsWithoutGaps = 0
+        for (word in line.trim().split(Regex("""\s+"""))) {
             numberOfWords++
+            numberOfSymbolsWithoutGaps += word.count()
+        }
         if (Regex("""\s*""").matches(line))
             outputStream.println("")
         else if (numberOfWords == 0) outputStream.println(line.trim())
         else {
-            val numberOfGaps = longestLineLength - line.trim().lastIndexOf(line.trim().last()) - 2
-            println(numberOfGaps)
+            val numberOfGaps = longestLineLength - numberOfSymbolsWithoutGaps
+            println(line)
+            println(numberOfSymbolsWithoutGaps)
             if (numberOfGaps > 0) {
                 val numberOfGapsAfterEveryWord = numberOfGaps / numberOfWords
                 var extraGaps = numberOfGaps % numberOfWords
                 for (word in line.trim().split(Regex("""\s+"""))) {
-                    newLine.append("$word ")
+                    newLine.append(word)
                     newLine.append(" ".repeat(numberOfGapsAfterEveryWord))
                     if (extraGaps != 0) {
                         newLine.append(" ")
