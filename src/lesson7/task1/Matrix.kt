@@ -72,10 +72,17 @@ class MatrixImpl<E>(override val height: Int, override val width: Int) : Matrix<
         map[cell] = value
     }
 
-    override fun equals(other: Any?) =
-            other is MatrixImpl<*> &&
-                    height == other.height &&
-                    width == other.width
+    override fun equals(other: Any?): Boolean {
+        if (other is MatrixImpl<*> && height == other.height && width == other.width) {
+            for (i in 0 until height)
+                for (k in 0 until width)
+                    if (this[i, k] != other[i, k])
+                        return false
+            return true
+        }
+        return false
+    }
+
 
     override fun hashCode(): Int {
         var result = height
